@@ -1,1 +1,1 @@
-include ':cafejava'
+include ':cafejava', ':cafejava-sample'
