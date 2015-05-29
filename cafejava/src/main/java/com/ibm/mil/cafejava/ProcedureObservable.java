@@ -5,7 +5,7 @@
 
 package com.ibm.mil.cafejava;
 
-public final class CafeJava {
+public final class ProcedureObservable {
     private final String adapterName;
     private final String procedureName;
     private final Object[] parameters;
@@ -42,12 +42,12 @@ public final class CafeJava {
             return this;
         }
 
-        public CafeJava build() {
-            return new CafeJava(this);
+        public ProcedureObservable build() {
+            return new ProcedureObservable(this);
         }
     }
 
-    private CafeJava(Builder builder) {
+    private ProcedureObservable(Builder builder) {
         adapterName = builder.adapterName;
         procedureName = builder.procedureName;
         parameters = builder.parameters;
