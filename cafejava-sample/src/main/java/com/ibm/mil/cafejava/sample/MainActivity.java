@@ -1,11 +1,16 @@
 package com.ibm.mil.cafejava.sample;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ibm.mil.cafejava.CafeJava;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 public class MainActivity extends Activity {
@@ -15,11 +20,23 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CafeJava cafeJava = new CafeJava().timeout(5000);
-        cafeJava.createConnectionObservable().subscribe();
-        cafeJava.parameters("one", 2, true)
-                .createProcedureObservable("adapter", "procedure")
-                .subscribe();
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.show();
+
+        new CafeJava()
+                .createConnectionObservable(this)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Object>() {
+                    @Override public void call(Object o) {
+                        dialog.cancel();
+                        Toast.makeText(MainActivity.this, "Connected to Worklight", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override public void call(Throwable throwable) {
+                        dialog.cancel();
+                        Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override

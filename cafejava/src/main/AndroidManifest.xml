@@ -2,8 +2,9 @@
           package="com.ibm.mil.cafejava">
 
     <application android:allowBackup="true"
-                 android:label="@string/app_name"
-        >
+                 android:label="@string/app_name">
+
+        <activity android:name="com.worklight.wlclient.ui.UIActivity" />
 
     </application>
 
