@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.ibm.mil.cafejava.ProcedureCaller;
-
-import rx.Observable;
+import com.ibm.mil.cafejava.CafeJava;
 
 
 public class MainActivity extends Activity {
@@ -17,10 +15,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Observable<String> observable = new ProcedureCaller()
-                .setTimeout(5000)
-                .setParameters("string", 1, true)
-                .createObservable("adapter", "procedure");
+        CafeJava cafeJava = new CafeJava().timeout(5000);
+        cafeJava.createConnectionObservable().subscribe();
+        cafeJava.parameters("one", 2, true)
+                .createProcedureObservable("adapter", "procedure")
+                .subscribe();
     }
 
     @Override
