@@ -5,14 +5,17 @@
 
 package com.ibm.mil.cafejava;
 
-public final class ProcedureObservable {
+import rx.Observable;
+import rx.Subscriber;
+
+public final class ProcedureCaller<T> extends Observable<T> {
     private final String adapterName;
     private final String procedureName;
     private final Object[] parameters;
     private final int timeout;
     private final Object invocationContext;
 
-    public static final class Builder {
+    public final class Builder {
         private final static int DEFAULT_TIMEOUT = 30_000;
 
         private final String adapterName;
@@ -42,12 +45,17 @@ public final class ProcedureObservable {
             return this;
         }
 
-        public ProcedureObservable build() {
-            return new ProcedureObservable(this);
+        public Observable<T> build() {
+            return ProcedureCaller.create(new OnSubscribe<T>() {
+                @Override public void call(Subscriber<? super T> subscriber) {
+
+                }
+            });
+            // return new ProcedureObservable(this);
         }
     }
 
-    private ProcedureObservable(Builder builder) {
+    private ProcedureCaller(Builder builder) {
         adapterName = builder.adapterName;
         procedureName = builder.procedureName;
         parameters = builder.parameters;
