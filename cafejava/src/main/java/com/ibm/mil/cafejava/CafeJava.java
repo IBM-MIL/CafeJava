@@ -22,14 +22,13 @@ public final class CafeJava {
     private static final String TAG = CafeJava.class.getName();
     private static final int DEFAULT_TIMEOUT = 30_000;
 
-    private Object[] parameters = new Object[] {}; // TODO: make varargs to createProduceObservable()
+    private Object[] parameters = new Object[] {};
     private int timeout = DEFAULT_TIMEOUT;
     private Object invocationContext;
 
-    // TODO: deal with raw WL response and generics
-    public <T> Observable<T> createProcedureObservable(final String adapterName, final String procedureName) {
-        return Observable.create(new Observable.OnSubscribe<T>() {
-            @Override public void call(final Subscriber<? super T> subscriber) {
+    public Observable<WLResponse> createProcedureObservable(final String adapterName, final String procedureName) {
+        return Observable.create(new Observable.OnSubscribe<WLResponse>() {
+            @Override public void call(final Subscriber<? super WLResponse> subscriber) {
                 Log.i(TAG, "createProduceObservable called");
 
                 WLClient client = WLClient.getInstance();
@@ -38,14 +37,13 @@ public final class CafeJava {
                     return;
                 }
 
-                // TODO: encode params and deal with compression argument
                 WLProcedureInvocationData invocationData =
                         new WLProcedureInvocationData(adapterName, procedureName, false);
                 invocationData.setParameters(parameters);
 
                 client.invokeProcedure(invocationData, new WLResponseListener() {
                     @Override public void onSuccess(WLResponse wlResponse) {
-                        subscriber.onNext(null);
+                        subscriber.onNext(wlResponse);
                     }
 
                     @Override public void onFailure(WLFailResponse wlFailResponse) {
@@ -56,15 +54,15 @@ public final class CafeJava {
         });
     }
 
-    public <T> Observable<T> createConnectionObservable(final Context context) {
-        return Observable.create(new Observable.OnSubscribe<T>() {
-            @Override public void call(final Subscriber<? super T> subscriber) {
+    public Observable<WLResponse> createConnectionObservable(final Context context) {
+        return Observable.create(new Observable.OnSubscribe<WLResponse>() {
+            @Override public void call(final Subscriber<? super WLResponse> subscriber) {
                 Log.i(TAG, "createConnectionObservable called");
 
                 WLClient client = WLClient.createInstance(context);
                 client.connect(new WLResponseListener() {
                     @Override public void onSuccess(WLResponse wlResponse) {
-                        subscriber.onNext(null);
+                        subscriber.onNext(wlResponse);
                         subscriber.onCompleted();
                     }
 

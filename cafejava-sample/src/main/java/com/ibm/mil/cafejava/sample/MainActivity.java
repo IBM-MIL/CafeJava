@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ibm.mil.cafejava.CafeJava;
+import com.worklight.wlclient.api.WLResponse;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -26,8 +27,8 @@ public class MainActivity extends Activity {
         new CafeJava()
                 .createConnectionObservable(this)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Object>() {
-                    @Override public void call(Object o) {
+                .subscribe(new Action1<WLResponse>() {
+                    @Override public void call(WLResponse wlResponse) {
                         dialog.cancel();
                         Toast.makeText(MainActivity.this, "Connected to Worklight", Toast.LENGTH_SHORT).show();
                     }
