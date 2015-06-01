@@ -5,6 +5,8 @@
 
 package com.ibm.mil.cafejava.sample;
 
+import com.google.gson.Gson;
+
 public class Person {
     private String name;
     private int age;
@@ -20,5 +22,9 @@ public class Person {
 
     public boolean isDeveloper() {
         return isDeveloper;
+    }
+
+    public String toString() {
+        return new Gson().toJson(this);
     }
 }

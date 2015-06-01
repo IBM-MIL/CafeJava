@@ -8,12 +8,18 @@ package com.ibm.mil.cafejava;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
 import com.worklight.wlclient.api.WLProcedureInvocationData;
 import com.worklight.wlclient.api.WLRequestOptions;
 import com.worklight.wlclient.api.WLResponse;
 import com.worklight.wlclient.api.WLResponseListener;
+
+import java.lang.reflect.Type;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -62,6 +68,23 @@ public final class CafeJava {
                 return wlResponseObservable.map(new Func1<WLResponse, T>() {
                     @Override public T call(WLResponse wlResponse) {
                         return new Gson().fromJson(wlResponse.getResponseJSON().toString(), clazz);
+                    }
+                });
+            }
+        };
+    }
+
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type) {
+        return new Observable.Transformer<WLResponse, T>() {
+            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
+                return wlResponseObservable.map(new Func1<WLResponse, T>() {
+                    @Override public T call(WLResponse wlResponse) {
+                        Gson gson = new Gson();
+                        JsonParser parser = new JsonParser();
+                        JsonElement element = parser.parse(wlResponse.getResponseJSON().toString());
+                        JsonObject jsonObject = element.getAsJsonObject();
+                        JsonArray jsonArray = jsonObject.getAsJsonArray("result");
+                        return new Gson().fromJson(jsonArray, type);
                     }
                 });
             }
