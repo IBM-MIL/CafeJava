@@ -28,8 +28,7 @@ public final class CafeJava {
                                                             final Object... parameters) {
 
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
-            @Override public void call(final Subscriber<? super WLResponse> subscriber) {
-
+            @Override public void call(Subscriber<? super WLResponse> subscriber) {
                 WLClient client = WLClient.getInstance();
                 if (client == null) {
                     subscriber.onError(new Throwable("WLClient instance does not exist"));
@@ -40,35 +39,17 @@ public final class CafeJava {
                         new WLProcedureInvocationData(adapterName, procedureName, false);
                 invocationData.setParameters(parameters);
 
-                client.invokeProcedure(invocationData, new WLResponseListener() {
-                    @Override public void onSuccess(WLResponse wlResponse) {
-                        subscriber.onNext(wlResponse);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override public void onFailure(WLFailResponse wlFailResponse) {
-                        subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
-                    }
-                }, getRequestOptions());
+                client.invokeProcedure(invocationData, new RxResponseListener(subscriber),
+                        getRequestOptions());
             }
         });
     }
 
     public Observable<WLResponse> createConnectionObservable(final Context context) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
-            @Override public void call(final Subscriber<? super WLResponse> subscriber) {
-
+            @Override public void call(Subscriber<? super WLResponse> subscriber) {
                 WLClient client = WLClient.createInstance(context);
-                client.connect(new WLResponseListener() {
-                    @Override public void onSuccess(WLResponse wlResponse) {
-                        subscriber.onNext(wlResponse);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override public void onFailure(WLFailResponse wlFailResponse) {
-                        subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
-                    }
-                }, getRequestOptions());
+                client.connect(new RxResponseListener(subscriber), getRequestOptions());
             }
         });
     }
@@ -88,6 +69,23 @@ public final class CafeJava {
         requestOptions.setTimeout(timeout);
         requestOptions.setInvocationContext(invocationContext);
         return requestOptions;
+    }
+
+    private static class RxResponseListener implements WLResponseListener {
+        private Subscriber<? super WLResponse> subscriber;
+
+        RxResponseListener(Subscriber<? super WLResponse> subscriber) {
+            this.subscriber = subscriber;
+        }
+
+        @Override public void onSuccess(WLResponse wlResponse) {
+            subscriber.onNext(wlResponse);
+            subscriber.onCompleted();
+        }
+
+        @Override public void onFailure(WLFailResponse wlFailResponse) {
+            subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
+        }
     }
 
 }
