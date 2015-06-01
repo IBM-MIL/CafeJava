@@ -22,11 +22,10 @@ public final class CafeJava {
     private static final String TAG = CafeJava.class.getName();
     private static final int DEFAULT_TIMEOUT = 30_000;
 
-    private Object[] parameters = new Object[] {};
     private int timeout = DEFAULT_TIMEOUT;
     private Object invocationContext;
 
-    public Observable<WLResponse> createProcedureObservable(final String adapterName, final String procedureName) {
+    public Observable<WLResponse> createProcedureObservable(final String adapterName, final String procedureName, final Object... parameters) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(final Subscriber<? super WLResponse> subscriber) {
                 Log.i(TAG, "createProduceObservable called");
@@ -72,11 +71,6 @@ public final class CafeJava {
                 }, getRequestOptions());
             }
         });
-    }
-
-    public CafeJava parameters(Object... parameters) {
-        this.parameters = parameters;
-        return this;
     }
 
     public CafeJava timeout(int timeout) {
