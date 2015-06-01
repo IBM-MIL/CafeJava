@@ -13,8 +13,14 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.ibm.mil.cafejava.CafeJava;
+import com.ibm.mil.cafejava.JsonConfigurator;
 import com.worklight.wlclient.api.WLResponse;
 
 import java.lang.reflect.Type;
@@ -44,7 +50,15 @@ public class MainActivity extends Activity {
                     @Override public void call(WLResponse wlResponse) {
                         new CafeJava()
                                 .createProcedureObservable("ReadyAppsAdapter", "getPeople")
-                                .compose(CafeJava.<List<Person>>serializeTo(peopleType))
+                                .compose(CafeJava.<List<Person>>serializeTo(peopleType, new JsonConfigurator() {
+                                    @Override public String configure(String json) {
+                                        JsonParser parser = new JsonParser();
+                                        JsonElement element = parser.parse(json);
+                                        JsonObject object = element.getAsJsonObject();
+                                        JsonArray result = object.getAsJsonArray("result");
+                                        return new Gson().toJson(result);
+                                    }
+                                }))
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Action1<List<Person>>() {
                                     @Override public void call(List<Person> person) {
