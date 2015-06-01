@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * © Copyright IBM Corporation 2015. All Rights Reserved.
+ */
+
 package com.ibm.mil.cafejava.sample;
 
 import android.app.Activity;
@@ -12,7 +17,6 @@ import com.worklight.wlclient.api.WLResponse;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-
 
 public class MainActivity extends Activity {
 
