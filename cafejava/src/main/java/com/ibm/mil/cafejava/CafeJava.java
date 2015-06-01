@@ -6,7 +6,6 @@
 package com.ibm.mil.cafejava;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
@@ -19,13 +18,15 @@ import rx.Observable;
 import rx.Subscriber;
 
 public final class CafeJava {
-    private static final String TAG = CafeJava.class.getName();
     private static final int DEFAULT_TIMEOUT = 30_000;
 
     private int timeout = DEFAULT_TIMEOUT;
     private Object invocationContext;
 
-    public Observable<WLResponse> createProcedureObservable(final String adapterName, final String procedureName, final Object... parameters) {
+    public Observable<WLResponse> createProcedureObservable(final String adapterName,
+                                                            final String procedureName,
+                                                            final Object... parameters) {
+
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(final Subscriber<? super WLResponse> subscriber) {
 
