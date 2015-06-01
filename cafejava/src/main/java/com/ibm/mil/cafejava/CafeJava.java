@@ -7,6 +7,7 @@ package com.ibm.mil.cafejava;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
 import com.worklight.wlclient.api.WLProcedureInvocationData;
@@ -16,6 +17,7 @@ import com.worklight.wlclient.api.WLResponseListener;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func1;
 
 public final class CafeJava {
     private static final int DEFAULT_TIMEOUT = 30_000;
@@ -52,6 +54,18 @@ public final class CafeJava {
                 client.connect(new RxResponseListener(subscriber), getRequestOptions());
             }
         });
+    }
+
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz) {
+        return new Observable.Transformer<WLResponse, T>() {
+            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
+                return wlResponseObservable.map(new Func1<WLResponse, T>() {
+                    @Override public T call(WLResponse wlResponse) {
+                        return new Gson().fromJson(wlResponse.getResponseJSON().toString(), clazz);
+                    }
+                });
+            }
+        };
     }
 
     public CafeJava timeout(int timeout) {

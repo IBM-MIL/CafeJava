@@ -33,13 +33,21 @@ public class MainActivity extends Activity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<WLResponse>() {
                     @Override public void call(WLResponse wlResponse) {
-                        dialog.cancel();
-                        Toast.makeText(MainActivity.this, "Connected to Worklight", Toast.LENGTH_SHORT).show();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override public void call(Throwable throwable) {
-                        dialog.cancel();
-                        Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        new CafeJava()
+                                .createProcedureObservable("ReadyAppsAdapter", "getPerson")
+                                .compose(CafeJava.serializeTo(Person.class))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Action1<Person>() {
+                                    @Override public void call(Person person) {
+                                        dialog.cancel();
+                                        Toast.makeText(MainActivity.this, person.getName(), Toast.LENGTH_LONG).show();
+                                    }
+                                }, new Action1<Throwable>() {
+                                    @Override public void call(Throwable throwable) {
+                                        dialog.cancel();
+                                        Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
                     }
                 });
     }
