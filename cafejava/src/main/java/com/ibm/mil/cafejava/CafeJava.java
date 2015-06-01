@@ -28,7 +28,6 @@ public final class CafeJava {
     public Observable<WLResponse> createProcedureObservable(final String adapterName, final String procedureName, final Object... parameters) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(final Subscriber<? super WLResponse> subscriber) {
-                Log.i(TAG, "createProduceObservable called");
 
                 WLClient client = WLClient.getInstance();
                 if (client == null) {
@@ -56,7 +55,6 @@ public final class CafeJava {
     public Observable<WLResponse> createConnectionObservable(final Context context) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(final Subscriber<? super WLResponse> subscriber) {
-                Log.i(TAG, "createConnectionObservable called");
 
                 WLClient client = WLClient.createInstance(context);
                 client.connect(new WLResponseListener() {
