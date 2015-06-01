@@ -43,6 +43,7 @@ public final class CafeJava {
                 client.invokeProcedure(invocationData, new WLResponseListener() {
                     @Override public void onSuccess(WLResponse wlResponse) {
                         subscriber.onNext(wlResponse);
+                        subscriber.onCompleted();
                     }
 
                     @Override public void onFailure(WLFailResponse wlFailResponse) {
