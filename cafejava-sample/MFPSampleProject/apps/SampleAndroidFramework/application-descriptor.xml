@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed Materials - Property of IBM
+    5725-I43 (C) Copyright IBM Corp. 2011, 2013. All Rights Reserved.
+    US Government Users Restricted Rights - Use, duplication or
+    disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<nativeAndroidApp id="SampleAndroidFramework" platformVersion="7.0.0.00.20150430-1556"
+	version="1.0" xmlns="http://www.worklight.com/native-android-descriptor">
+	
+	<displayName>SampleAndroidFramework</displayName>
+	<description>SampleAndroidFramework</description>
+	<publicSigningKey></publicSigningKey>
+	<packageName></packageName>
+	<accessTokenExpiration>3600</accessTokenExpiration>
+	<userIdentityRealms></userIdentityRealms>
+		
+</nativeAndroidApp>
