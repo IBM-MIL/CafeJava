@@ -6,21 +6,15 @@
 package com.ibm.mil.cafejava.sample;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.ibm.mil.cafejava.CafeJava;
-import com.ibm.mil.cafejava.JsonConfigurator;
 import com.worklight.wlclient.api.WLResponse;
 
 import java.lang.reflect.Type;
@@ -38,8 +32,10 @@ public class MainActivity extends Activity {
 
         final TextView jsonPayload = (TextView) findViewById(R.id.json_payload);
 
+        /*
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.show();
+        */
 
         final Type peopleType = new TypeToken<List<Person>>(){}.getType();
 
@@ -49,28 +45,23 @@ public class MainActivity extends Activity {
                 .subscribe(new Action1<WLResponse>() {
                     @Override public void call(WLResponse wlResponse) {
                         new CafeJava()
-                                .createProcedureObservable("ReadyAppsAdapter", "getPeople")
-                                .compose(CafeJava.<List<Person>>serializeTo(peopleType, new JsonConfigurator() {
-                                    @Override public String configure(String json) {
-                                        JsonParser parser = new JsonParser();
-                                        JsonElement element = parser.parse(json);
-                                        JsonObject object = element.getAsJsonObject();
-                                        JsonArray result = object.getAsJsonArray("result");
-                                        return new Gson().toJson(result);
-                                    }
-                                }))
+                                .createProcedureObservable("SampleAdapter", "getPersonFlat")
+                                .compose(CafeJava.serializeTo(Person.class))
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Action1<List<Person>>() {
-                                    @Override public void call(List<Person> person) {
-                                        dialog.cancel();
+                                .subscribe(new Action1<Person>() {
+                                    @Override public void call(Person person) {
                                         jsonPayload.setText(person.toString());
                                     }
                                 }, new Action1<Throwable>() {
                                     @Override public void call(Throwable throwable) {
-                                        dialog.cancel();
                                         Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
                                     }
                                 });
+                    }
+                }, new Action1<Throwable>() {
+                    @Override public void call(Throwable throwable) {
+                        Log.i("blah", throwable.getMessage());
+                        Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }
