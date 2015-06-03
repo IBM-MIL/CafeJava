@@ -8,6 +8,9 @@ package com.ibm.mil.cafejava;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
 import com.worklight.wlclient.api.WLProcedureInvocationData;
@@ -26,6 +29,25 @@ public final class CafeJava {
 
     private int timeout = DEFAULT_TIMEOUT;
     private Object invocationContext;
+
+    public CafeJava timeout(int timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
+    public CafeJava invocationContext(Object invocationContext) {
+        this.invocationContext = invocationContext;
+        return this;
+    }
+
+    public Observable<WLResponse> createConnectionObservable(final Context context) {
+        return Observable.create(new Observable.OnSubscribe<WLResponse>() {
+            @Override public void call(Subscriber<? super WLResponse> subscriber) {
+                WLClient client = WLClient.createInstance(context);
+                client.connect(new RxResponseListener(subscriber), getRequestOptions());
+            }
+        });
+    }
 
     public Observable<WLResponse> createProcedureObservable(final String adapterName,
                                                             final String procedureName,
@@ -49,15 +71,6 @@ public final class CafeJava {
         });
     }
 
-    public Observable<WLResponse> createConnectionObservable(final Context context) {
-        return Observable.create(new Observable.OnSubscribe<WLResponse>() {
-            @Override public void call(Subscriber<? super WLResponse> subscriber) {
-                WLClient client = WLClient.createInstance(context);
-                client.connect(new RxResponseListener(subscriber), getRequestOptions());
-            }
-        });
-    }
-
     public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz) {
         return new Observable.Transformer<WLResponse, T>() {
             @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
@@ -71,13 +84,26 @@ public final class CafeJava {
     }
 
     public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz,
-                                                                        final JsonConfigurator configurator) {
+                                                                        final String memberName) {
         return new Observable.Transformer<WLResponse, T>() {
             @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
                 return wlResponseObservable.map(new Func1<WLResponse, T>() {
                     @Override public T call(WLResponse wlResponse) {
-                        String rawJson = wlResponse.getResponseJSON().toString();
-                        String configuredJson = configurator.configure(rawJson);
+                        JsonElement value = parseJsonResponse(wlResponse, memberName);
+                        return new Gson().fromJson(value, clazz);
+                    }
+                });
+            }
+        };
+    }
+
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz,
+                                                                        final JsonConfigurator config) {
+        return new Observable.Transformer<WLResponse, T>() {
+            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
+                return wlResponseObservable.map(new Func1<WLResponse, T>() {
+                    @Override public T call(WLResponse wlResponse) {
+                        String configuredJson = applyJsonConfigurator(wlResponse, config);;
                         return new Gson().fromJson(configuredJson, clazz);
                     }
                 });
@@ -86,13 +112,26 @@ public final class CafeJava {
     }
 
     public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type,
-                                                                        final JsonConfigurator configurator) {
+                                                                        final String memberName) {
         return new Observable.Transformer<WLResponse, T>() {
             @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
                 return wlResponseObservable.map(new Func1<WLResponse, T>() {
                     @Override public T call(WLResponse wlResponse) {
-                        String rawJson = wlResponse.getResponseJSON().toString();
-                        String configuredJson = configurator.configure(rawJson);
+                        JsonElement value = parseJsonResponse(wlResponse, memberName);
+                        return new Gson().fromJson(value, type);
+                    }
+                });
+            }
+        };
+    }
+
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type,
+                                                                        final JsonConfigurator config) {
+        return new Observable.Transformer<WLResponse, T>() {
+            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
+                return wlResponseObservable.map(new Func1<WLResponse, T>() {
+                    @Override public T call(WLResponse wlResponse) {
+                        String configuredJson = applyJsonConfigurator(wlResponse, config);
                         return new Gson().fromJson(configuredJson, type);
                     }
                 });
@@ -100,21 +139,22 @@ public final class CafeJava {
         };
     }
 
-    public CafeJava timeout(int timeout) {
-        this.timeout = timeout;
-        return this;
-    }
-
-    public CafeJava invocationContext(Object invocationContext) {
-        this.invocationContext = invocationContext;
-        return this;
-    }
-
     private WLRequestOptions getRequestOptions() {
         WLRequestOptions requestOptions = new WLRequestOptions();
         requestOptions.setTimeout(timeout);
         requestOptions.setInvocationContext(invocationContext);
         return requestOptions;
+    }
+
+    private static JsonElement parseJsonResponse(WLResponse wlResponse, String memberName) {
+        String json = wlResponse.getResponseJSON().toString();
+        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        return jsonObject.get(memberName);
+    }
+
+    private static String applyJsonConfigurator(WLResponse wlResponse, JsonConfigurator config) {
+        String json = wlResponse.getResponseJSON().toString();
+        return config.configure(json);
     }
 
     private static class RxResponseListener implements WLResponseListener {
