@@ -28,5 +28,7 @@
 	</connectivity>
 
 	<procedure name="getPersonFlat"/>
+	<procedure name="getPersonNested"/>
+
 
 </wl:adapter>

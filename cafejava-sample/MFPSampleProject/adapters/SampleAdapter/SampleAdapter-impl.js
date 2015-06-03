@@ -41,7 +41,7 @@
  *              "age": 22,
  *              "name": "FirstName LastName"
  *          }
-
+ *
  */
 function getPersonFlat() {
 
@@ -52,5 +52,40 @@ function getPersonFlat() {
 
 	return person;
 }
+
+
+
+/**
+ * getPersonNested() returns a Person object that is nested inside of the 'person' field.
+ *
+ * @returns a person object within the 'person' field
+ * 		response is formatted :
+ *			{
+ *			  "person": {
+ *				"isDeveloper": true,
+ *				"age": 22,
+ * 				"name": "FirstName LastName"
+ *			  },
+ *			  "isSuccessful": true
+ *			}
+ *
+ */
+function getPersonNested() {
+	var result = {};
+
+	var person = {};
+	person.name = 'FirstName LastName';
+	person.age = 22;
+	person.isDeveloper = true;
+
+	result.person = person;
+
+	return result;
+
+}
+
+
+
+
 
 
