@@ -27,8 +27,8 @@
 		</connectionPolicy>
 	</connectivity>
 
-	<procedure name="getStories"/>
+	<procedure name="getPersonFlat"/>
+	<procedure name="getPersonNested"/>
+	<procedure name="getAllPersons"/>
 
-	<procedure name="getStoriesFiltered"/>
-	
 </wl:adapter>

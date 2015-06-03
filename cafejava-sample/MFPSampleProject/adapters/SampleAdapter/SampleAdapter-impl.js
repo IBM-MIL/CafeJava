@@ -31,54 +31,116 @@
  */
 
 /**
- * @param interest
- *            must be one of the following: world, africa, sport, technology, ...
- *            (The list can be found in http://edition.cnn.com/services/rss/)
- * @returns json list of items
+ * getPersonFlat() returns a flat Person object.
+ *
+ * @returns a person object in a flat response
+ * 		response is formatted :
+ * 			{
+ *              "isDeveloper": true,
+ *              "isSuccessful": true,
+ *              "age": 22,
+ *              "name": "FirstName LastName"
+ *          }
+ *
  */
-function getStories(interest) {
-	path = getPath(interest);
-	
-	var input = {
-	    method : 'get',
-	    returnedContentType : 'xml',
-	    path : path
-	};
-	
-	
-	return WL.Server.invokeHttp(input);
+function getPersonFlat() {
+
+	var person = {};
+	person.name = 'FirstName LastName';
+	person.age = 22;
+	person.isDeveloper = true;
+
+	return person;
 }
+
+
+
 /**
- * 
- * @param interest
- *            must be one of the following: world, africa, sport, technology, ...
- *            (The list can be found in http://edition.cnn.com/services/rss/)
- * @returns json list of items
+ * getPersonNested() returns a Person object that is nested inside of the 'person' field.
+ *
+ * @returns a person object within the 'person' field
+ * 		response is formatted :
+ *			{
+ *			  "person": {
+ *				"isDeveloper": true,
+ *				"age": 22,
+ * 				"name": "FirstName LastName"
+ *			  },
+ *			  "isSuccessful": true
+ *			}
+ *
  */
-function getStoriesFiltered(interest) {
-	path = getPath(interest);
-	
-	var input = {
-	    method : 'get',
-	    returnedContentType : 'xml',
-	    path : path,
-	    transformation : {
-		    type : 'xslFile',
-		    xslFile : 'filtered.xsl'
-	    }
-	};
-	
-	return WL.Server.invokeHttp(input);
+function getPersonNested() {
+	var result = {};
+
+	var person = {};
+	person.name = 'FirstName LastName';
+	person.age = 22;
+	person.isDeveloper = true;
+
+	result.person = person;
+
+	return result;
+
 }
 
 
+/**
+ * getAllPersons() an array of all the Person objects.
+ *
+ * @returns an array of Person objects.
+ * 		example response is formatted :
+ *		   {
+ *			 "isSuccessful": true,
+ *			 "persons": [
+ *			   {
+ *				 "isDeveloper": true,
+ *				 "age": 20,
+ *				 "name": "Name0"
+ *			   },
+ *			   {
+ *				 "isDeveloper": true,
+ *				 "age": 21,
+ *				 "name": "Name1"
+ *			   },
+ *			   {
+ * 				 "isDeveloper": true,
+ *				 "age": 22,
+ *				 "name": "Name2"
+ *			   },
+ *			   {
+ *				 "isDeveloper": true,
+ *				 "age": 23,
+ *				 "name": "Name3"
+ *			   }
+ *			 ]
+ *		   }
+ *
+ */
+function getAllPersons() {
+	var TOTAL_PERSONS = 4;
+	var START_AGE = 20;
 
-function getPath(interest) {
-	if (interest == undefined || interest == '') {
-		interest = '';
-	}else {
-		interest = '_' + interest;
+	var result = {};
+
+	allPersons = [];
+
+	for (i = 0; i < TOTAL_PERSONS; i++) {
+		var person = {};
+		person.name = 'Name' + i;
+		person.age = START_AGE + i;
+		person.isDeveloper = true;
+
+		allPersons[i] = person;
 	}
-	return 'rss/edition' + interest + '.rss';
+
+	result.persons = allPersons;
+
+	return result;
+
 }
+
+
+
+
 
