@@ -27,8 +27,6 @@
 		</connectionPolicy>
 	</connectivity>
 
-	<procedure name="getStories"/>
+	<procedure name="getPersonFlat"/>
 
-	<procedure name="getStoriesFiltered"/>
-	
 </wl:adapter>
