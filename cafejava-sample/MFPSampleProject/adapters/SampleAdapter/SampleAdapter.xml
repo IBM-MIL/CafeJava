@@ -29,6 +29,6 @@
 
 	<procedure name="getPersonFlat"/>
 	<procedure name="getPersonNested"/>
-
+	<procedure name="getAllPersons"/>
 
 </wl:adapter>

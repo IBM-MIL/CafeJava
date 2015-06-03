@@ -85,6 +85,61 @@ function getPersonNested() {
 }
 
 
+/**
+ * getAllPersons() an array of all the Person objects.
+ *
+ * @returns an array of Person objects.
+ * 		example response is formatted :
+ *		   {
+ *			 "isSuccessful": true,
+ *			 "persons": [
+ *			   {
+ *				 "isDeveloper": true,
+ *				 "age": 20,
+ *				 "name": "Name0"
+ *			   },
+ *			   {
+ *				 "isDeveloper": true,
+ *				 "age": 21,
+ *				 "name": "Name1"
+ *			   },
+ *			   {
+ * 				 "isDeveloper": true,
+ *				 "age": 22,
+ *				 "name": "Name2"
+ *			   },
+ *			   {
+ *				 "isDeveloper": true,
+ *				 "age": 23,
+ *				 "name": "Name3"
+ *			   }
+ *			 ]
+ *		   }
+ *
+ */
+function getAllPersons() {
+	var TOTAL_PERSONS = 4;
+	var START_AGE = 20;
+
+	var result = {};
+
+	allPersons = [];
+
+	for (i = 0; i < TOTAL_PERSONS; i++) {
+		var person = {};
+		person.name = 'Name' + i;
+		person.age = START_AGE + i;
+		person.isDeveloper = true;
+
+		allPersons[i] = person;
+	}
+
+	result.persons = allPersons;
+
+	return result;
+
+}
+
 
 
 
