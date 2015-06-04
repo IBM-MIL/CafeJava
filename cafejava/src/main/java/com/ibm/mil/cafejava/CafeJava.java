@@ -103,7 +103,7 @@ public final class CafeJava {
             @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
                 return wlResponseObservable.map(new Func1<WLResponse, T>() {
                     @Override public T call(WLResponse wlResponse) {
-                        String configuredJson = applyJsonConfigurator(wlResponse, config);;
+                        String configuredJson = applyJsonConfigurator(wlResponse, config);
                         return new Gson().fromJson(configuredJson, clazz);
                     }
                 });

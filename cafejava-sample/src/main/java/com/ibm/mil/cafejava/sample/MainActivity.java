@@ -26,7 +26,7 @@ import com.worklight.wlclient.api.WLResponse;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import rx.Observable;
@@ -85,7 +85,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         String procedureName = parent.getItemAtPosition(pos).toString();
         Observable<WLResponse> procedureObservable = cafeJava
                 .createProcedureObservable("SampleAdapter", procedureName);
-        Observable<List<Person>> peopleObservable = null;
+        Observable<List<Person>> peopleObservable;
 
         switch (procedureName) {
             case "getPersonFlat":
@@ -110,7 +110,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
         peopleObservable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new PeopleSubscriber());
-
     }
 
     private static class PeopleAdapter extends ArrayAdapter<Person> {
@@ -154,7 +153,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     private class PersonListMapper implements Func1<Person, List<Person>> {
         @Override public List<Person> call(Person person) {
-            return Arrays.asList(person);
+            return Collections.singletonList(person);
         }
     }
 
