@@ -6,15 +6,18 @@
 package com.ibm.mil.cafejava.sample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -32,7 +35,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener,
+        AdapterView.OnItemClickListener {
+
     private CafeJava cafeJava;
     private List<Person> peopleDataSet = new ArrayList<>();
     private ArrayAdapter<Person> peopleAdapter;
@@ -53,8 +58,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
         // initialize list
         ListView peopleList = (ListView) findViewById(R.id.people_list);
-        peopleAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, peopleDataSet);
+        peopleAdapter = new PeopleAdapter(this, peopleDataSet);
         peopleList.setAdapter(peopleAdapter);
         peopleList.setOnItemClickListener(this);
 
@@ -109,6 +113,45 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     }
 
+    private static class PeopleAdapter extends ArrayAdapter<Person> {
+        Activity activity;
+        List<Person> dataset;
+
+        public PeopleAdapter(Context context, List<Person> dataset) {
+            super(context, R.layout.person_item, dataset);
+            activity = (Activity) context;
+            this.dataset = dataset;
+        }
+
+        static class ViewHolder {
+            TextView personName;
+            TextView personAge;
+        }
+
+        @Override public View getView(int pos, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+
+            if (convertView == null) {
+                LayoutInflater inflater = activity.getLayoutInflater();
+                convertView = inflater.inflate(R.layout.person_item, parent, false);
+
+                holder = new ViewHolder();
+                holder.personName = (TextView) convertView.findViewById(R.id.person_name);
+                holder.personAge = (TextView) convertView.findViewById(R.id.person_age);
+
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            Person person = dataset.get(pos);
+            holder.personName.setText(person.getName());
+            holder.personAge.setText(person.getAge() + " years old");
+
+            return convertView;
+        }
+    }
+
     private class PersonListMapper implements Func1<Person, List<Person>> {
         @Override public List<Person> call(Person person) {
             return Arrays.asList(person);
@@ -141,7 +184,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Log.i("TAG", "NOTHING SELECTED!");
+        // not implemented
     }
 
     @Override
