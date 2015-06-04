@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         cafeJava = new CafeJava().timeout(10_000);
 
         // establish WL connection
-        cafeJava.createConnectionObservable(this)
+        cafeJava.establishConnection(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<WLResponse>() {
                     @Override public void call(WLResponse wlResponse) {
@@ -84,7 +84,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         // handle spinner selections
         String procedureName = parent.getItemAtPosition(pos).toString();
         Observable<WLResponse> procedureObservable = cafeJava
-                .createProcedureObservable("SampleAdapter", procedureName);
+                .invokeProcedure("SampleAdapter", procedureName);
         Observable<List<Person>> peopleObservable;
 
         switch (procedureName) {
