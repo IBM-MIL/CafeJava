@@ -25,9 +25,7 @@ import rx.Subscriber;
 import rx.functions.Func1;
 
 public final class CafeJava {
-    private static final int DEFAULT_TIMEOUT = 30_000;
-
-    private int timeout = DEFAULT_TIMEOUT;
+    private int timeout = 30_000;
     private Object invocationContext;
 
     public CafeJava timeout(int timeout) {
