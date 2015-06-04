@@ -112,6 +112,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 .subscribe(new PeopleSubscriber());
     }
 
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // not implemented
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+        // handle list clicks
+        Person person = (Person) parent.getItemAtPosition(pos);
+        Toast.makeText(this, "isDeveloper? " + person.isDeveloper(), Toast.LENGTH_SHORT).show();
+    }
+
     private static class PeopleAdapter extends ArrayAdapter<Person> {
         Activity activity;
         List<Person> dataset;
@@ -171,19 +183,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         @Override public void onError(Throwable throwable) {
             Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-        // handle list clicks
-        Person person = (Person) parent.getItemAtPosition(pos);
-        String message = person.getName() + " is " + person.getAge() + " years old";
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // not implemented
     }
 
     @Override
