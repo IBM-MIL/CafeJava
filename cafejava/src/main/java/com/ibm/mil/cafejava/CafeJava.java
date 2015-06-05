@@ -8,7 +8,6 @@ package com.ibm.mil.cafejava;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.worklight.wlclient.api.WLClient;
@@ -92,90 +91,48 @@ public final class CafeJava {
         });
     }
 
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz) {
-        return new Observable.Transformer<WLResponse, T>() {
-            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
-                return wlResponseObservable.map(new Func1<WLResponse, T>() {
-                    @Override public T call(WLResponse wlResponse) {
-                        return new Gson().fromJson(wlResponse.getResponseJSON().toString(), clazz);
-                    }
-                });
-            }
-        };
-    }
-
     public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz,
-                                                                        final String memberName) {
-        return new Observable.Transformer<WLResponse, T>() {
-            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
-                return wlResponseObservable.map(new Func1<WLResponse, T>() {
-                    @Override public T call(WLResponse wlResponse) {
-                        JsonElement value = parseJsonResponse(wlResponse, memberName);
-                        return new Gson().fromJson(value, clazz);
-                    }
-                });
+                                                                        final String... memberNames) {
+        return transformJson(new Func1<WLResponse, T>() {
+            @Override public T call(WLResponse wlResponse) {
+                JsonObject jsonObject = parseNestedJson(wlResponse, memberNames);
+                return new Gson().fromJson(jsonObject, clazz);
             }
-        };
-    }
-
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz,
-                                                                        final JsonConfigurator config) {
-        return new Observable.Transformer<WLResponse, T>() {
-            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
-                return wlResponseObservable.map(new Func1<WLResponse, T>() {
-                    @Override public T call(WLResponse wlResponse) {
-                        String configuredJson = applyJsonConfigurator(wlResponse, config);
-                        return new Gson().fromJson(configuredJson, clazz);
-                    }
-                });
-            }
-        };
+        });
     }
 
     public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type,
-                                                                        final String memberName) {
+                                                                        final String... memberNames) {
+        return transformJson(new Func1<WLResponse, T>() {
+            @Override public T call(WLResponse wlResponse) {
+                JsonObject jsonObject = parseNestedJson(wlResponse, memberNames);
+                return new Gson().fromJson(jsonObject, type);
+            }
+        });
+    }
+
+    private static <T> Observable.Transformer<WLResponse, T> transformJson(final Func1<WLResponse, T> func) {
         return new Observable.Transformer<WLResponse, T>() {
             @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
-                return wlResponseObservable.map(new Func1<WLResponse, T>() {
-                    @Override public T call(WLResponse wlResponse) {
-                        JsonElement value = parseJsonResponse(wlResponse, memberName);
-                        return new Gson().fromJson(value, type);
-                    }
-                });
+                return wlResponseObservable.map(func);
             }
         };
     }
 
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type,
-                                                                        final JsonConfigurator config) {
-        return new Observable.Transformer<WLResponse, T>() {
-            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
-                return wlResponseObservable.map(new Func1<WLResponse, T>() {
-                    @Override public T call(WLResponse wlResponse) {
-                        String configuredJson = applyJsonConfigurator(wlResponse, config);
-                        return new Gson().fromJson(configuredJson, type);
-                    }
-                });
-            }
-        };
-    }
+    private static JsonObject parseNestedJson(WLResponse wlResponse, String... memberNames) {
+        String json = wlResponse.getResponseJSON().toString();
+        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        for (String member : memberNames) {
+            jsonObject = jsonObject.getAsJsonObject(member);
+        }
+        return jsonObject;
+    };
 
     private WLRequestOptions getRequestOptions() {
         WLRequestOptions requestOptions = new WLRequestOptions();
         requestOptions.setTimeout(timeout);
         requestOptions.setInvocationContext(invocationContext);
         return requestOptions;
-    }
-
-    private static JsonElement parseJsonResponse(WLResponse wlResponse, String memberName) {
-        String json = wlResponse.getResponseJSON().toString();
-        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-        return jsonObject.get(memberName);
-    }
-
-    private static String applyJsonConfigurator(WLResponse wlResponse, JsonConfigurator config) {
-        String json = wlResponse.getResponseJSON().toString();
-        return config.configure(json);
     }
 
     private static class RxResponseListener implements WLResponseListener {

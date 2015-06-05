@@ -70,7 +70,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         cafeJava.setTimeout(-1);
 
         // establish WL connection
-        cafeJava.establishConnection(this)
+        cafeJava.connect(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<WLResponse>() {
                     @Override public void call(WLResponse wlResponse) {
