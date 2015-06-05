@@ -35,6 +35,10 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
+/**
+ * @author John Petitto  (github @jpetitto)
+ * @author Tanner Preiss (github @t-preiss)
+ */
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener,
         AdapterView.OnItemClickListener {
 
@@ -62,7 +66,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         peopleList.setAdapter(peopleAdapter);
         peopleList.setOnItemClickListener(this);
 
-        cafeJava = new CafeJava().timeout(10_000);
+        cafeJava = new CafeJava().setTimeout(10_000);
+        cafeJava.setTimeout(-1);
 
         // establish WL connection
         cafeJava.establishConnection(this)

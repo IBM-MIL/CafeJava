@@ -24,13 +24,36 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
 
+/**
+ * @author John Petitto  (github @jpetitto)
+ * @author Tanner Preiss (github @t-preiss)
+ */
 public final class CafeJava {
     private int timeout = 30_000;
     private Object invocationContext;
 
-    public CafeJava timeout(int timeout) {
-        this.timeout = timeout;
+    /**
+     * setTimeout() sets the timeout for all MFP procedure and connection calls made using
+     *      this API.
+     * @param timeout The current timeout, in milliseconds, to wait for a procedure or connection to respond.
+     * @return CafeJava returns the instance of CafaJava class, which is useful for chaining calls.
+     */
+    public CafeJava setTimeout(int timeout) {
+        if (timeout >= 0) {
+            this.timeout = timeout;
+        }
         return this;
+    }
+
+    /**
+     * getTimeout() returns the current timeout used when waiting for a procedure or connection to respond.
+     *      If no value has been set using setTimeout() then getTimeout() will return
+     *      the default timeout of 30_000 (milliseconds).
+     *
+     * @return timeout The current timeout, in milliseconds, to wait for a procedure or connection to respond.
+     */
+    public int getTimeout() {
+        return timeout;
     }
 
     public CafeJava invocationContext(Object invocationContext) {
