@@ -8,6 +8,7 @@ package com.ibm.mil.cafejava;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.worklight.wlclient.api.WLClient;
@@ -95,8 +96,8 @@ public final class CafeJava {
                                                                         final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
             @Override public T call(WLResponse wlResponse) {
-                JsonObject jsonObject = parseNestedJson(wlResponse, memberNames);
-                return new Gson().fromJson(jsonObject, clazz);
+                JsonElement element = parseNestedJson(wlResponse, memberNames);
+                return new Gson().fromJson(element, clazz);
             }
         });
     }
@@ -105,8 +106,8 @@ public final class CafeJava {
                                                                         final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
             @Override public T call(WLResponse wlResponse) {
-                JsonObject jsonObject = parseNestedJson(wlResponse, memberNames);
-                return new Gson().fromJson(jsonObject, type);
+                JsonElement element = parseNestedJson(wlResponse, memberNames);
+                return new Gson().fromJson(element, type);
             }
         });
     }
@@ -119,12 +120,20 @@ public final class CafeJava {
         };
     }
 
-    private static JsonObject parseNestedJson(WLResponse wlResponse, String... memberNames) {
+    private static JsonElement parseNestedJson(WLResponse wlResponse, String... memberNames) {
         String json = wlResponse.getResponseJSON().toString();
         JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-        for (String member : memberNames) {
-            jsonObject = jsonObject.getAsJsonObject(member);
+
+        for (int i = 0, size = memberNames.length; i < size; i++) {
+            String member = memberNames[i];
+
+            if (i == size - 1) {
+                return jsonObject.get(member);
+            } else {
+                jsonObject = jsonObject.getAsJsonObject(member);
+            }
         }
+
         return jsonObject;
     };
 
