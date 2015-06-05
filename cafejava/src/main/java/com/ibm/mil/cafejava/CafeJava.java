@@ -61,7 +61,7 @@ public final class CafeJava {
         return this;
     }
 
-    public Observable<WLResponse> establishConnection(final Context context) {
+    public Observable<WLResponse> connect(final Context context) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(Subscriber<? super WLResponse> subscriber) {
                 WLClient client = WLClient.createInstance(context);
