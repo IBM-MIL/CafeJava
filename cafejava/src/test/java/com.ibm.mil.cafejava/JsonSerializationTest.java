@@ -8,11 +8,12 @@ package com.ibm.mil.cafejava;
 import com.google.gson.Gson;
 import com.worklight.wlclient.api.WLResponse;
 
-import org.apache.http.HttpResponse;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -22,39 +23,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class JsonSerializationTest {
-    static class MockResponse extends WLResponse {
-        MockResponse(HttpResponse httpResponse) {
-            super(httpResponse);
-        }
-
-        @Override public JSONObject getResponseJSON() {
-            Person person = new Person();
-            person.name = "John";
-            person.age = 25;
-            person.isDeveloper = true;
-
-            JSONObject jsonObject = null;
-            try {
-                return new JSONObject(new Gson().toJson(person));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } finally {
-                return jsonObject;
-            }
-        }
-    }
-
-    static class Person {
-        String name;
-        int age;
-        boolean isDeveloper;
-    }
-
-    private Observable<MockResponse> mockObservable;
+    private Observable<WLResponse> mockObservable;
 
     @Before
     public void setUp() {
-        mockObservable = Observable.just(new MockResponse(null));
+        WLResponse wlResponse = Mockito.mock(WLResponse.class);
+        Mockito.when(wlResponse.getResponseJSON())
+                .then(new Answer<JSONObject>() {
+                    @Override
+                    public JSONObject answer(InvocationOnMock invocation) throws Throwable {
+                        Person person = new Person();
+                        person.name = "John";
+                        person.age = 25;
+                        person.isDeveloper = true;
+                        return new JSONObject(new Gson().toJson(person));
+                    }
+                });
+        mockObservable = Observable.just(wlResponse);
     }
 
     @Test
@@ -73,6 +58,12 @@ public class JsonSerializationTest {
                         fail("Exception thrown: " + throwable.getMessage());
                     }
                 });
+    }
+
+    static class Person {
+        String name;
+        int age;
+        boolean isDeveloper;
     }
 
 }
