@@ -34,7 +34,8 @@ public final class CafeJava {
 
     /**
      * setTimeout() sets the timeout for all MFP procedure and connection calls made using
-     *      this API.
+     * this API.
+     *
      * @param timeout The current timeout, in milliseconds, to wait for a procedure or connection to respond.
      * @return CafeJava returns the instance of CafaJava class, which is useful for chaining calls.
      */
@@ -47,8 +48,8 @@ public final class CafeJava {
 
     /**
      * getTimeout() returns the current timeout used when waiting for a procedure or connection to respond.
-     *      If no value has been set using setTimeout() then getTimeout() will return
-     *      the default timeout of 30_000 (milliseconds).
+     * If no value has been set using setTimeout() then getTimeout() will return
+     * the default timeout of 30_000 (milliseconds).
      *
      * @return timeout The current timeout, in milliseconds, to wait for a procedure or connection to respond.
      */
@@ -60,9 +61,9 @@ public final class CafeJava {
      * setInvocationContext() User can add to the request any object, that will be available on the callback (success/failure) functions.
      *
      * @param invocationContext An object that is returned with WLResponse to the listener methods onSuccess and onFailure.
-     *      You can use this object to identify and distinguish different invokeProcedure calls.
-     *      This object is returned as is to the listener methods.
-     * @return
+     *                          You can use this object to identify and distinguish different invokeProcedure calls.
+     *                          This object is returned as is to the listener methods.
+     * @return CafeJava returns the instance of CafaJava class, which is useful for chaining calls.
      */
     public CafeJava setInvocationContext(Object invocationContext) {
         this.invocationContext = invocationContext;
@@ -73,58 +74,66 @@ public final class CafeJava {
      * getInvocationContext() return the user invocation context
      *
      * @return An object that is returned with WLResponse to the listener methods onSuccess and onFailure.
-     *      You can use this object to identify and distinguish different invokeProcedure calls.
-     *      This object is returned as is to the listener methods
+     * You can use this object to identify and distinguish different invokeProcedure calls.
+     * This object is returned as is to the listener methods
      */
     public Object getInvocationContext(Object invocationContext) {
         return this.invocationContext;
     }
 
+    /**
+     * connect() This method sends an initialization request to the MobileFirst Platform Server,
+     * establishes a connection with the server, and validates the application version.
+     *
+     * @param context object that is returned with WLResponse to the listener methods onSuccess an
+     *                onFailure.
+     *                You can use this object to identify and distinguish different invokeProcedure calls.
+     *                This object is returned as is to the listener methods.
+     * @return an Observable that will emit a WLResponse for the connection.
+     */
     public Observable<WLResponse> connect(final Context context) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
-            @Override public void call(Subscriber<? super WLResponse> subscriber) {
+            @Override
+            public void call(Subscriber<? super WLResponse> subscriber) {
                 WLClient client = WLClient.createInstance(context);
                 client.connect(new RxResponseListener(subscriber), getRequestOptions());
             }
         });
     }
 
-    public Observable<WLResponse> invokeProcedure(final String adapterName,
-                                                  final String procedureName,
-                                                  final Object... parameters) {
+    public Observable<WLResponse> invokeProcedure(final String adapterName, final String procedureName, final Object... parameters) {
 
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
-            @Override public void call(Subscriber<? super WLResponse> subscriber) {
+            @Override
+            public void call(Subscriber<? super WLResponse> subscriber) {
                 WLClient client = WLClient.getInstance();
                 if (client == null) {
                     subscriber.onError(new Throwable("WLClient instance does not exist"));
                     return;
                 }
 
-                WLProcedureInvocationData invocationData =
-                        new WLProcedureInvocationData(adapterName, procedureName, false);
+                WLProcedureInvocationData invocationData = new WLProcedureInvocationData(adapterName, procedureName, false);
                 invocationData.setParameters(parameters);
 
-                client.invokeProcedure(invocationData, new RxResponseListener(subscriber),
-                        getRequestOptions());
+                client.invokeProcedure(invocationData, new RxResponseListener(subscriber), getRequestOptions());
             }
         });
     }
 
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz,
-                                                                        final String... memberNames) {
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz, final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
-            @Override public T call(WLResponse wlResponse) {
+            @Override
+            public T call(WLResponse wlResponse) {
                 JsonElement element = parseNestedJson(wlResponse, memberNames);
                 return new Gson().fromJson(element, clazz);
             }
         });
     }
 
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type,
-                                                                        final String... memberNames) {
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type, final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
-            @Override public T call(WLResponse wlResponse) {
+            @Override
+            public T call(WLResponse wlResponse) {
                 JsonElement element = parseNestedJson(wlResponse, memberNames);
                 return new Gson().fromJson(element, type);
             }
@@ -133,7 +142,8 @@ public final class CafeJava {
 
     private static <T> Observable.Transformer<WLResponse, T> transformJson(final Func1<WLResponse, T> func) {
         return new Observable.Transformer<WLResponse, T>() {
-            @Override public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
+            @Override
+            public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
                 return wlResponseObservable.map(func);
             }
         };
@@ -154,7 +164,9 @@ public final class CafeJava {
         }
 
         return jsonObject;
-    };
+    }
+
+    ;
 
     private WLRequestOptions getRequestOptions() {
         WLRequestOptions requestOptions = new WLRequestOptions();
@@ -170,12 +182,14 @@ public final class CafeJava {
             this.subscriber = subscriber;
         }
 
-        @Override public void onSuccess(WLResponse wlResponse) {
+        @Override
+        public void onSuccess(WLResponse wlResponse) {
             subscriber.onNext(wlResponse);
             subscriber.onCompleted();
         }
 
-        @Override public void onFailure(WLFailResponse wlFailResponse) {
+        @Override
+        public void onFailure(WLFailResponse wlFailResponse) {
             subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
         }
     }
