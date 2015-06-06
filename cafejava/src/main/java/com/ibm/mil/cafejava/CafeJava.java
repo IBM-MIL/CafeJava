@@ -56,9 +56,28 @@ public final class CafeJava {
         return timeout;
     }
 
-    public CafeJava invocationContext(Object invocationContext) {
+    /**
+     * setInvocationContext() User can add to the request any object, that will be available on the callback (success/failure) functions.
+     *
+     * @param invocationContext An object that is returned with WLResponse to the listener methods onSuccess and onFailure.
+     *      You can use this object to identify and distinguish different invokeProcedure calls.
+     *      This object is returned as is to the listener methods.
+     * @return
+     */
+    public CafeJava setInvocationContext(Object invocationContext) {
         this.invocationContext = invocationContext;
         return this;
+    }
+
+    /**
+     * getInvocationContext() return the user invocation context
+     *
+     * @return An object that is returned with WLResponse to the listener methods onSuccess and onFailure.
+     *      You can use this object to identify and distinguish different invokeProcedure calls.
+     *      This object is returned as is to the listener methods
+     */
+    public Object getInvocationContext(Object invocationContext) {
+        return this.invocationContext;
     }
 
     public Observable<WLResponse> connect(final Context context) {
