@@ -128,6 +128,33 @@ public final class CafeJava {
         });
     }
 
+    /**
+     * serializeTo() uses a Transformer to transform a WLResponse into the given class.
+     * @param clazz The class for which the WLResponse Json will be serialized to.
+     * @param memberNames the names of the fields in the JSON returned in the WLResponse.
+     *                    If more than one memberName is specified this method serialize the
+     *                    final memberName specified and serialize this name to the provided
+     *                    class type.
+     *                    ex:
+     *                    if the JSON object returned is as follows and the user wishes to
+     *                    serialize field3 to a Person then the method would be:
+     *
+     *                    new CafeJava.serializeTo(Person.class, "field1", "field2", "field3")
+     *
+     *                    {
+     *                      field1 : {
+     *                          field2: {
+     *                              field3: {
+     *                                  name: "FirstName"
+     *                                  age: 22
+     *                              }
+     *                          }
+     *                      }
+     *                    }
+     *
+     * @param <T>
+     * @return
+     */
     public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz, final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
             @Override
