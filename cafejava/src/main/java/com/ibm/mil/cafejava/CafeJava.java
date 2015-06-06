@@ -82,8 +82,8 @@ public final class CafeJava {
     }
 
     /**
-     * connect() This method sends an initialization request to the MobileFirst Platform Server,
-     * establishes a connection with the server, and validates the application version.
+     * connect() creates an Observable that emits responses for the connection call to the
+     * MobileFirst Platform Server.
      *
      * @param context object that is returned with WLResponse to the listener methods onSuccess an
      *                onFailure.
@@ -101,6 +101,14 @@ public final class CafeJava {
         });
     }
 
+    /**
+     * invokeProcedure() creates an Observable that emits responses for the given procedure call.
+     * @param adapterName the adapter name on Worklight's server.
+     * @param procedureName the procedure name on Worklight's server.
+     * @param parameters the Worklight method request parameters. The order of the object in the
+     *                   array will be the order sending them to the adapter.
+     * @return an Observable that will emit a WLResponse for the connection.
+     */
     public Observable<WLResponse> invokeProcedure(final String adapterName, final String procedureName, final Object... parameters) {
 
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
