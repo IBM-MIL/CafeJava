@@ -77,8 +77,8 @@ public final class CafeJava {
      * You can use this object to identify and distinguish different invokeProcedure calls.
      * This object is returned as is to the listener methods
      */
-    public Object getInvocationContext(Object invocationContext) {
-        return this.invocationContext;
+    public Object getInvocationContext() {
+        return invocationContext;
     }
 
     /**
