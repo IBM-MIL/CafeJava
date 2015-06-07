@@ -201,8 +201,6 @@ public final class CafeJava {
         return jsonObject;
     }
 
-    ;
-
     private WLRequestOptions getRequestOptions() {
         WLRequestOptions requestOptions = new WLRequestOptions();
         requestOptions.setTimeout(timeout);
