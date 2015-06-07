@@ -6,6 +6,8 @@
 package com.ibm.mil.cafejava;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -65,7 +67,8 @@ public final class CafeJava {
      *                          This object is returned as is to the listener methods.
      * @return CafeJava returns the instance of CafaJava class, which is useful for chaining calls.
      */
-    public CafeJava setInvocationContext(Object invocationContext) {
+    @NonNull
+    public CafeJava setInvocationContext(@Nullable Object invocationContext) {
         this.invocationContext = invocationContext;
         return this;
     }
@@ -77,6 +80,7 @@ public final class CafeJava {
      * You can use this object to identify and distinguish different invokeProcedure calls.
      * This object is returned as is to the listener methods
      */
+    @Nullable
     public Object getInvocationContext() {
         return invocationContext;
     }
@@ -91,7 +95,8 @@ public final class CafeJava {
      *                This object is returned as is to the listener methods.
      * @return an Observable that will emit a WLResponse for the connection.
      */
-    public Observable<WLResponse> connect(final Context context) {
+    @NonNull
+    public Observable<WLResponse> connect(@NonNull final Context context) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override
             public void call(Subscriber<? super WLResponse> subscriber) {
@@ -109,7 +114,10 @@ public final class CafeJava {
      *                   array will be the order sending them to the adapter.
      * @return an Observable that will emit a WLResponse for the connection.
      */
-    public Observable<WLResponse> invokeProcedure(final String adapterName, final String procedureName, final Object... parameters) {
+    @NonNull
+    public Observable<WLResponse> invokeProcedure(@NonNull final String adapterName,
+                                                  @NonNull final String procedureName,
+                                                  @Nullable final Object... parameters) {
 
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override
@@ -155,7 +163,9 @@ public final class CafeJava {
      * @param <T>
      * @return
      */
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Class<T> clazz, final String... memberNames) {
+    @NonNull
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(@NonNull final Class<T> clazz,
+                                                                        @NonNull final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
             @Override
             public T call(WLResponse wlResponse) {
@@ -165,7 +175,9 @@ public final class CafeJava {
         });
     }
 
-    public static <T> Observable.Transformer<WLResponse, T> serializeTo(final Type type, final String... memberNames) {
+    @NonNull
+    public static <T> Observable.Transformer<WLResponse, T> serializeTo(@NonNull final Type type,
+                                                                        @NonNull final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
             @Override
             public T call(WLResponse wlResponse) {
