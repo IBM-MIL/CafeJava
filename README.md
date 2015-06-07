@@ -56,10 +56,11 @@ cafeJava.invokeProcedure("adapter", "procedureTwo");
 CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` object of the type we want to serialize to and chain our `Observable<WLResponse>` with the compose operator:
 
 ``` java
-Observable<Person> personObservable = observable.compose(CafeJava.serializeTo(Person.class));
+Observable<Person> personObservable =
+    observable.compose(CafeJava.serializeTo(Person.class));
 ```
 
-For more complex responses where the desired data for serialization is nested, we can supply the list of the member names that will obtain the serializable data:
+For more complex responses where the desired data for serialization is nested, we can supply the list of member names that will obtain the serializable data:
 
 ``` java
 observable.compose(CafeJava.serializeTo(Person.class, "result", "person"));
@@ -69,7 +70,8 @@ If the response returns an array, we can use `TypeToken` from the Gson library t
 
 ``` java
 Type peopleType = new TypeToken<List<Person>>(){}.getType();
-Observable<List<Person>> peopleObservable = observable.serializeTo(peopleType, "result");
+Observable<List<Person>> peopleObservable =
+    observable.serializeTo(peopleType, "result");
 ```
 
 ## Running the sample app
@@ -96,7 +98,7 @@ This should return the following response:
   "name": "FirstName LastName"
 }
 ```
-In order for the Android sample app to connect to our local instance, we need to update wlclient.properties file (found under the sample project's assets folder) by changing the value of the `wlServerHost` key to our machine's IP address.
+In order for the Android sample app to connect to our local instance, we need to update wlclient.properties (found under the sample project's assets folder) by changing the value of the `wlServerHost` key to our machine's IP address.
 
 Note: A new wlclient.properties file gets generated under `/cafejava-sample/MFPSampleProject/apps/SampleAndroidFramework` each time you deploy the adapter. This file can simply replace the one found in the sample project's assets folder.
 
