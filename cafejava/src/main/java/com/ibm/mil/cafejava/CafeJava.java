@@ -13,14 +13,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
 import com.worklight.wlclient.api.WLProcedureInvocationData;
 import com.worklight.wlclient.api.WLRequestOptions;
 import com.worklight.wlclient.api.WLResponse;
 import com.worklight.wlclient.api.WLResponseListener;
-
-import java.lang.reflect.Type;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -179,13 +178,13 @@ public final class CafeJava {
     }
 
     @NonNull
-    public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final Type type,
+    public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final TypeToken<T> typeToken,
                                                              @NonNull final String... memberNames) {
         return transformJson(new Func1<WLResponse, T>() {
             @Override
             public T call(WLResponse wlResponse) {
                 JsonElement element = parseNestedJson(wlResponse, memberNames);
-                return new Gson().fromJson(element, type);
+                return new Gson().fromJson(element, typeToken.getType());
             }
         });
     }

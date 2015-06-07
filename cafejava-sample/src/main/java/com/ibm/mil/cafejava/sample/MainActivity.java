@@ -24,7 +24,6 @@ import com.google.gson.reflect.TypeToken;
 import com.ibm.mil.cafejava.CafeJava;
 import com.worklight.wlclient.api.WLResponse;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,9 +106,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
             case "getAllPersons":
             default:
-                Type type = new TypeToken<List<Person>>(){}.getType();
+                TypeToken<List<Person>> typeToken = new TypeToken<List<Person>>(){};
                 peopleObservable = procedureObservable
-                        .compose(CafeJava.<List<Person>>serializeTo(type, "persons"));
+                        .compose(CafeJava.serializeTo(typeToken, "persons"));
                 break;
         }
 
