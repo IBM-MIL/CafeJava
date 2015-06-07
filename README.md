@@ -71,7 +71,7 @@ If the response returns an array, we can use `TypeToken` from the Gson library t
 ``` java
 TypeToken<List<Person>> typeToken = new TypeToken<List<Person>>(){};
 Observable<List<Person>> peopleObservable =
-    observable.compose(CafeJava.serializeTo(peopleType, "result"));
+    observable.compose(CafeJava.serializeTo(typeToken, "result"));
 ```
 
 ## Running the sample app
