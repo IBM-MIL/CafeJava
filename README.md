@@ -45,25 +45,24 @@ Furthermore, we can easily provide the necessary parameters for a procedure invo
 new CafeJava().invokeProcedure("adapter", "procedure", "arg1", "arg2", "arg3");
 ```
 
-Request options, such as a timeout, can be specified on a `CafeJava` instance. This instance can then be shared across procedure invocations:
+Request options, such as a timeout, can be specified on a `CafeJava` instance. This instance can then be shared across multiple procedure invocations:
 
 ``` java
 CafeJava cafeJava = new CafeJava.setTimeout(5000);
-Observable<WLResponse> observableOne = cafeJava.invokeProcedure("adapter", "procedureOne");
-Observable<WLResponse> observableTwo = cafeJava.invokeProcedure("adapter", "procedureTwo");
+cafeJava.invokeProcedure("adapter", "procedureOne");
+cafeJava.invokeProcedure("adapter", "procedureTwo");
 ```
 
-CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` of the model object that the JSON will serialize to by chaining our `Observable<WLResponse>` with the compose operator:
+CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` object of the type we want to serialize to and chain our `Observable<WLResponse>` with the compose operator:
 
 ``` java
 Observable<Person> personObservable = observable.compose(CafeJava.serializeTo(Person.class));
 ```
 
-For more complex responses where the desired data for serialization is nested, we can supply a list of the member names that are required for access:
+For more complex responses where the desired data for serialization is nested, we can supply the list of the member names that will obtain the serializable data:
 
 ``` java
-Observable<Person> personObservable =
-              observable.compose(CafeJava.serializeTo(Person.class, "result", "person"));
+observable.compose(CafeJava.serializeTo(Person.class, "result", "person"));
 ```
 
 If the response returns an array, we can use `TypeToken` from the Gson library to help us:
