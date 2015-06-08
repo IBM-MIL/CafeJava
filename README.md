@@ -55,6 +55,14 @@ cafeJava.invokeProcedure("adapter", "procedureTwo");
 
 CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` object of the type we want to serialize to and chain our `Observable<WLResponse>` with the compose operator:
 
+``` json
+{
+  "name": "John Smith",
+  "age": 42,
+  "isDeveloper": true
+}
+```
+
 ``` java
 Observable<Person> personObservable =
     observable.compose(CafeJava.serializeTo(Person.class));
@@ -62,11 +70,45 @@ Observable<Person> personObservable =
 
 For more complex responses where the desired data for serialization is nested, we can supply the list of member names that will obtain the serializable data:
 
+``` json
+{
+  "result": {
+    "person": {
+      "name": "John Smith",
+      "age": 42,
+      "isDeveloper": true
+    }
+  }
+}
+```
+
 ``` java
 observable.compose(CafeJava.serializeTo(Person.class, "result", "person"));
 ```
 
 If the response returns an array, we can use `TypeToken` from the Gson library to help us:
+
+``` json
+{
+  "result": [
+    {
+      "name": "John Smith",
+      "age": 42,
+      "isDeveloper": true
+    },
+    {
+      "name": "Robert Jones",
+      "age": 26,
+      "isDeveloper": false
+    },
+    {
+      "name": "Mary Davis",
+      "age": 33,
+      "isDeveloper": true
+    }
+  ]
+}
+```
 
 ``` java
 TypeToken<List<Person>> typeToken = new TypeToken<List<Person>>(){};
