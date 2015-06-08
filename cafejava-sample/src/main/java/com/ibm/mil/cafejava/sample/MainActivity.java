@@ -30,9 +30,11 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * @author John Petitto  (github @jpetitto)
@@ -42,6 +44,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         AdapterView.OnItemClickListener {
 
     private CafeJava cafeJava;
+    private CompositeSubscription subscriptions = new CompositeSubscription();
     private List<Person> peopleDataSet = new ArrayList<>();
     private ArrayAdapter<Person> peopleAdapter;
 
@@ -66,10 +69,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         peopleList.setOnItemClickListener(this);
 
         cafeJava = new CafeJava().setTimeout(10_000);
-        cafeJava.setTimeout(-1);
 
         // establish WL connection
-        cafeJava.connect(this)
+        Subscription connectionSubscription = cafeJava.connect(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<WLResponse>() {
                     @Override public void call(WLResponse wlResponse) {
@@ -81,6 +83,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+        subscriptions.add(connectionSubscription);
     }
 
     @Override
@@ -112,8 +115,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 break;
         }
 
-        peopleObservable.observeOn(AndroidSchedulers.mainThread())
+        Subscription peopleSubscription = peopleObservable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new PeopleSubscriber());
+        subscriptions.add(peopleSubscription);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        subscriptions.unsubscribe();
     }
 
     @Override
