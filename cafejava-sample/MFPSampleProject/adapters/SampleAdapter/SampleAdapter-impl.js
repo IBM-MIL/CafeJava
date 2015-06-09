@@ -46,7 +46,7 @@
 function getPersonFlat() {
 
 	var person = {};
-	person.name = 'FirstName LastName';
+	person.name = 'Johnny Appleseed';
 	person.age = 22;
 	person.isDeveloper = true;
 
@@ -74,7 +74,7 @@ function getPersonNested() {
 	var result = {};
 
 	var person = {};
-	person.name = 'FirstName LastName';
+	person.name = 'James Monroe';
 	person.age = 22;
 	person.isDeveloper = true;
 
@@ -127,7 +127,7 @@ function getAllPersonsFlat() {
 
 	for (i = 0; i < TOTAL_PERSONS; i++) {
 		var person = {};
-		person.name = 'Name' + i;
+		person.name = 'FlatName' + i;
 		person.age = START_AGE + i;
 		person.isDeveloper = true;
 
@@ -185,7 +185,7 @@ function getAllPersonsNested() {
 
 	for (i = 0; i < TOTAL_PERSONS; i++) {
 		var person = {};
-		person.name = 'Name' + i;
+		person.name = 'NestedName' + i;
 		person.age = START_AGE + i;
 		person.isDeveloper = true;
 
