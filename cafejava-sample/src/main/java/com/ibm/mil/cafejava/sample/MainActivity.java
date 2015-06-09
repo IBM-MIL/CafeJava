@@ -108,11 +108,16 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                         .map(new PersonListMapper());
                 break;
 
-            case "getAllPersons":
-            default:
-                TypeToken<List<Person>> typeToken = new TypeToken<List<Person>>(){};
+            case "getAllPersonsFlat":
+                TypeToken<List<Person>> typeTokenFlat = new TypeToken<List<Person>>(){};
                 peopleObservable = procedureObservable
-                        .compose(CafeJava.serializeTo(typeToken, "persons"));
+                        .compose(CafeJava.serializeTo(typeTokenFlat, "persons"));
+                break;
+            case "getAllPersonsNest":
+            default:
+                TypeToken<List<Person>> typeTokenNested = new TypeToken<List<Person>>(){};
+                peopleObservable = procedureObservable
+                        .compose(CafeJava.serializeTo(typeTokenNested, "response", "persons"));
                 break;
         }
 
