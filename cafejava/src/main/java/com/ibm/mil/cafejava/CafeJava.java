@@ -28,6 +28,11 @@ import rx.functions.Func1;
 import static rx.Observable.Transformer;
 
 /**
+ * Configurable MFP client for establishing connections and invoking procedures in a reactive
+ * manner. For a detailed guide on using this class, visit
+ * <a href="https://github.com/t-preiss/CafeJava" target="_blank">the project's GitHub page</a> and
+ * view the README.
+ *
  * @author John Petitto  (github @jpetitto)
  * @author Tanner Preiss (github @t-preiss)
  */
@@ -36,11 +41,10 @@ public final class CafeJava {
     private Object invocationContext;
 
     /**
-     * setTimeout() sets the timeout for all MFP procedure and connection calls made using
-     * this API.
+     * The timeout that will be used for any MFP call invoked from this instance.
      *
-     * @param timeout The current timeout, in milliseconds, to wait for a procedure or connection to respond.
-     * @return CafeJava returns the instance of CafaJava class, which is useful for chaining calls.
+     * @param timeout Number of millis to wait for an MFP call to respond.
+     * @return The current instance of {@code CafeJava} to allow for easy call chaining.
      */
     public CafeJava setTimeout(int timeout) {
         if (timeout >= 0) {
@@ -49,24 +53,18 @@ public final class CafeJava {
         return this;
     }
 
-    /**
-     * getTimeout() returns the current timeout used when waiting for a procedure or connection to respond.
-     * If no value has been set using setTimeout() then getTimeout() will return
-     * the default timeout of 30_000 (milliseconds).
-     *
-     * @return timeout The current timeout, in milliseconds, to wait for a procedure or connection to respond.
-     */
+    /** @return Number of millis to wait for an MFP call to respond. */
     public int getTimeout() {
         return timeout;
     }
 
     /**
-     * setInvocationContext() User can add to the request any object, that will be available on the callback (success/failure) functions.
+     * An {@code invocationContext} serves as a mechanism for tagging a {@code WLResponse}. This
+     * can be useful when the source of a {@code WLResponse} is unknown.
      *
-     * @param invocationContext An object that is returned with WLResponse to the listener methods onSuccess and onFailure.
-     *                          You can use this object to identify and distinguish different invokeProcedure calls.
-     *                          This object is returned as is to the listener methods.
-     * @return CafeJava returns the instance of CafaJava class, which is useful for chaining calls.
+     * @param invocationContext Will be returned as part of any {@code WLResponse} that was
+     *                          originally invoked from this instance of {@code CafeJava}.
+     * @return The current instance of {@code CafeJava} to allow for easy call chaining.
      */
     @NonNull
     public CafeJava setInvocationContext(@Nullable Object invocationContext) {
@@ -75,11 +73,8 @@ public final class CafeJava {
     }
 
     /**
-     * getInvocationContext() return the user invocation context
-     *
-     * @return An object that is returned with WLResponse to the listener methods onSuccess and onFailure.
-     * You can use this object to identify and distinguish different invokeProcedure calls.
-     * This object is returned as is to the listener methods
+     * @return The object that will be returned as part of any {@code WLResponse} that was
+     * originally invoked from this instance of {@code CafeJava}.
      */
     @Nullable
     public Object getInvocationContext() {
@@ -87,14 +82,13 @@ public final class CafeJava {
     }
 
     /**
-     * connect() creates an Observable that emits responses for the connection call to the
-     * MobileFirst Platform Server.
+     * Creates an {@code Observable} that emits a {@code WLResponse} and connects to the MFP
+     * instance defined in the {@codewlclient.properties} file when there is a subscriber. The
+     * Observable will automatically perform its work on a dedicated background thread, so there
+     * is usually no need to use the {@code subscribeOn} method of RxJava.
      *
-     * @param context object that is returned with WLResponse to the listener methods onSuccess an
-     *                onFailure.
-     *                You can use this object to identify and distinguish different invokeProcedure calls.
-     *                This object is returned as is to the listener methods.
-     * @return an Observable that will emit a WLResponse for the connection.
+     * @param context
+     * @return {@code Observable} that emits a {@code WLResponse} for an MFP connection.
      */
     @NonNull
     public Observable<WLResponse> connect(@NonNull final Context context) {
@@ -108,13 +102,18 @@ public final class CafeJava {
     }
 
     /**
-     * invokeProcedure() creates an Observable that emits responses for the given procedure call.
+     * Creates an {@code Observable} that emits a {@code WLResponse} and invokes the specified
+     * procedure name for the given adapter name when there is a subscriber. The Observable will
+     * automatically perform its work on a dedicated background thread, so there is usually no
+     * need to use the {@code subscribeOn} method of RxJava.
      *
-     * @param adapterName   the adapter name on Worklight's server.
-     * @param procedureName the procedure name on Worklight's server.
-     * @param parameters    the Worklight method request parameters. The order of the object in the
-     *                      array will be the order sending them to the adapter.
-     * @return an Observable that will emit a WLResponse for the connection.
+     * @param adapterName   Name of the targeted adapter.
+     * @param procedureName Name of the targeted procedure that is defined within the adapter
+     *                      specified in the previous argument.
+     * @param parameters    Variable number of parameters that the specified procedure is
+     *                      expecting. The types of each parameter need to match the type that
+     *                      the procedure is expecting on the server.
+     * @return {@code Observable} that emits a {@code WLResponse} for an MFP procedure invocation.
      */
     @NonNull
     public Observable<WLResponse> invokeProcedure(@NonNull final String adapterName,
@@ -139,31 +138,17 @@ public final class CafeJava {
     }
 
     /**
-     * serializeTo() uses a Transformer to transform a WLResponse into the given class.
+     * Transforms a {@code WLResponse} that is emitted by an {@code Observable} containing a
+     * valid JSON payload into a new Observable for the targeted {@code Class} type. This can be
+     * done by passing the result of this method to the {@code compose} operator of RxJava. A
+     * variable number of member names can be provided for accessing JSON data that is nested
+     * arbitrarily deep inside the returned payload.
      *
-     * @param clazz       The class for which the WLResponse Json will be serialized to.
-     * @param memberNames the names of the fields in the JSON returned in the WLResponse.
-     *                    If more than one memberName is specified this method serialize the
-     *                    final memberName specified and serialize this name to the provided
-     *                    class type.
-     *                    ex:
-     *                    if the JSON object returned is as follows and the user wishes to
-     *                    serialize field3 to a Person then the method would be:
-     *                    <p/>
-     *                    new CafeJava.serializeTo(Person.class, "field1", "field2", "field3")
-     *                    <p/>
-     *                    {
-     *                    field1 : {
-     *                    field2: {
-     *                    field3: {
-     *                    name: "FirstName"
-     *                    age: 22
-     *                    }
-     *                    }
-     *                    }
-     *                    }
-     * @param <T>
-     * @return
+     * @param clazz       Targeted {@code Class} type for the JSON payload to be serialized into.
+     * @param memberNames Variable number of member names for accessing JSON data that is nested
+     *                    arbitrarily deep inside the returned payload.
+     * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
+     * . The input {@code Observable} must emit a {@code WLResponse}.
      */
     @NonNull
     public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final Class<T> clazz,
@@ -177,6 +162,20 @@ public final class CafeJava {
         });
     }
 
+    /**
+     * Transforms a {@code WLResponse} that is emitted by an {@code Observable} containing a
+     * valid JSON payload into a new Observable for the targeted {@code TypeToken}. This can be
+     * done by passing the result of this method to the {@code compose} operator of RxJava. A
+     * {@code TypeToken} is necessary when the targeted type is parameterized, which is the case
+     * with {@code List}. A variable number of member names can be provided for accessing JSON
+     * data that is nested arbitrarily deep inside the returned payload.
+     * @param typeToken Captures the necessary type information for parameterized types, such as
+     *                  {@code List}.
+     * @param memberNames Variable number of member names for accessing JSON data that is nested
+     *                    arbitrarily deep inside the returned payload.
+     * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
+     * . The input {@code Observable} must emit a {@code WLResponse}.
+     */
     @NonNull
     public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final TypeToken<T> typeToken,
                                                              @NonNull final String... memberNames) {
