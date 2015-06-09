@@ -119,13 +119,9 @@ Observable<List<Person>> peopleObservable =
 ## Running the sample app
 We will use the [MFP CLI](https://developer.ibm.com/mobilefirstplatform/install/#clui) to deploy the MFP sample project to our localhost.
 
-From the `/cafejava-sample/MFPSampleProject` directory, issue the following command:
+From the `/cafejava-sample/MFPSampleProject` directory, issue the following command to build and deploy the MFP adapters:
 ```
-mfp start
-```
-Once the MFP server has successfully started, we can deploy the adapters to our local instance:
-```
-mfp deploy
+mfp bd
 ```
 We can verify that our local instance is working properly by invoking one of the sample procedures:
 ```
