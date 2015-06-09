@@ -53,7 +53,9 @@ public final class CafeJava {
         return this;
     }
 
-    /** @return Number of millis to wait for an MFP call to respond. */
+    /**
+     * @return Number of millis to wait for an MFP call to respond.
+     */
     public int getTimeout() {
         return timeout;
     }
@@ -129,10 +131,12 @@ public final class CafeJava {
                     return;
                 }
 
-                WLProcedureInvocationData invocationData = new WLProcedureInvocationData(adapterName, procedureName, false);
+                WLProcedureInvocationData invocationData =
+                        new WLProcedureInvocationData(adapterName, procedureName, false);
                 invocationData.setParameters(parameters);
 
-                client.invokeProcedure(invocationData, new RxResponseListener(subscriber), getRequestOptions());
+                client.invokeProcedure(invocationData, new RxResponseListener(subscriber),
+                        getRequestOptions());
             }
         });
     }
@@ -169,8 +173,9 @@ public final class CafeJava {
      * {@code TypeToken} is necessary when the targeted type is parameterized, which is the case
      * with {@code List}. A variable number of member names can be provided for accessing JSON
      * data that is nested arbitrarily deep inside the returned payload.
-     * @param typeToken Captures the necessary type information for parameterized types, such as
-     *                  {@code List}.
+     *
+     * @param typeToken   Captures the necessary type information for parameterized types, such as
+     *                    {@code List}.
      * @param memberNames Variable number of member names for accessing JSON data that is nested
      *                    arbitrarily deep inside the returned payload.
      * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
