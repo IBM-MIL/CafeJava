@@ -86,7 +86,7 @@ function getPersonNested() {
 
 
 /**
- * getAllPersons() an array of all the Person objects.
+ * getAllPersonsFlat() an array of all the Person objects.
  *
  * @returns an array of Person objects.
  * 		example response is formatted :
@@ -117,7 +117,7 @@ function getPersonNested() {
  *		   }
  *
  */
-function getAllPersons() {
+function getAllPersonsFlat() {
 	var TOTAL_PERSONS = 4;
 	var START_AGE = 20;
 
@@ -137,10 +137,63 @@ function getAllPersons() {
 	result.persons = allPersons;
 
 	return result;
-
 }
 
+/**
+ * getAllPersonsNested() an array of all the Person objects nested in a 'response' field.
+ *
+ * @returns an array of Person objects.
+ * 		example response is formatted :
+ *		   {
+ *			 "isSuccessful": true,
+ *			 "reponse": {
+ *			 	"persons": [
+ *			   	{
+ *					"isDeveloper": true,
+ *				 	"age": 20,
+ *				 	"name": "Name0"
+ *			   	},
+ *			   	{
+ *				 	"isDeveloper": true,
+ *				 	"age": 21,
+ *				 	"name": "Name1"
+ *			   	},
+ *			   	{
+ * 				 	"isDeveloper": true,
+ *				 	"age": 22,
+ *				 	"name": "Name2"
+ *			   	},
+ *			   	{
+ *				 	"isDeveloper": true,
+ *				 	"age": 23,
+ *				 	"name": "Name3"
+ *			   	}
+ *			 	]
+ *              "size":4
+ *			}
+ *		  }
+ *
+ */
+function getAllPersonsNested() {
+	var TOTAL_PERSONS = 4;
+	var START_AGE = 20;
 
+	var result = {};
+	result.response = {};
 
+	allPersons = [];
 
+	for (i = 0; i < TOTAL_PERSONS; i++) {
+		var person = {};
+		person.name = 'Name' + i;
+		person.age = START_AGE + i;
+		person.isDeveloper = true;
 
+		allPersons[i] = person;
+	}
+
+	result.response.persons = allPersons;
+	result.response.size = TOTAL_PERSONS;
+
+	return result;
+}
