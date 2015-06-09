@@ -7,6 +7,7 @@
     <string-array name="procedure_array">
         <item>getPersonFlat</item>
         <item>getPersonNested</item>
-        <item>getAllPersons</item>
+        <item>getAllPersonsFlat</item>
+        <item>getAllPersonsNested</item>
     </string-array>
 </resources>
