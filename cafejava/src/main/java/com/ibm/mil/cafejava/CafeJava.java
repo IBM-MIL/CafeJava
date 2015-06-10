@@ -41,7 +41,8 @@ public final class CafeJava {
     private Object invocationContext;
 
     /**
-     * The timeout that will be used for any MFP call invoked from this instance.
+     * The timeout that will be used for any MFP call invoked from this instance of {@code
+     * CafeJava}.
      *
      * @param timeout Number of millis to wait for an MFP call to respond.
      * @return The current instance of {@code CafeJava} to allow for easy call chaining.
@@ -62,10 +63,11 @@ public final class CafeJava {
 
     /**
      * An {@code invocationContext} serves as a mechanism for tagging a {@code WLResponse}. This
-     * can be useful when the source of a {@code WLResponse} is unknown.
+     * can be useful when the source of a {@code WLResponse} is unknown. This context will be used
+     * for any MFP call invoked from this instance of {@code CafeJava}.
      *
-     * @param invocationContext Will be returned as part of any {@code WLResponse} that was
-     *                          originally invoked from this instance of {@code CafeJava}.
+     * @param invocationContext Returned as part of any {@code WLResponse} that was originally
+     *                          invoked from this instance of {@code CafeJava}.
      * @return The current instance of {@code CafeJava} to allow for easy call chaining.
      */
     @NonNull
@@ -75,8 +77,8 @@ public final class CafeJava {
     }
 
     /**
-     * @return The object that will be returned as part of any {@code WLResponse} that was
-     * originally invoked from this instance of {@code CafeJava}.
+     * @return The context (object) for any {@code WLResponse} that was originally invoked from
+     * this instance of {@code CafeJava}.
      */
     @Nullable
     public Object getInvocationContext() {
@@ -84,10 +86,12 @@ public final class CafeJava {
     }
 
     /**
-     * Creates an {@code Observable} that emits a {@code WLResponse} and connects to the MFP
-     * instance defined in the {@codewlclient.properties} file when there is a subscriber. The
-     * Observable will automatically perform its work on a dedicated background thread, so there
-     * is usually no need to use the {@code subscribeOn} method of RxJava.
+     * Creates an {@code Observable} that emits a {@code WLResponse} after attempting connection
+     * to the MFP server instance defined in the {@code wlclient.properties} file. This
+     * connection is only performed when there is a new {@code Subscriber} to the {@code
+     * Observable}. The {@code Observable} will automatically perform its work on a dedicated
+     * background thread, so there is usually no need to use the {@code subscribeOn} method of
+     * RxJava.
      *
      * @param context
      * @return {@code Observable} that emits a {@code WLResponse} for an MFP connection.
@@ -104,14 +108,14 @@ public final class CafeJava {
     }
 
     /**
-     * Creates an {@code Observable} that emits a {@code WLResponse} and invokes the specified
-     * procedure name for the given adapter name when there is a subscriber. The Observable will
+     * Creates an {@code Observable} that emits a {@code WLResponse} after attempting invocation
+     * of the specified procedure for the given adapter. This invocation is only performed when
+     * there is a new {@code Subscriber} to the {@code Observable}. The {@code Observable} will
      * automatically perform its work on a dedicated background thread, so there is usually no
      * need to use the {@code subscribeOn} method of RxJava.
      *
      * @param adapterName   Name of the targeted adapter.
-     * @param procedureName Name of the targeted procedure that is defined within the adapter
-     *                      specified in the previous argument.
+     * @param procedureName Name of the targeted procedure for the specified adapter.
      * @param parameters    Variable number of parameters that the specified procedure is
      *                      expecting. The types of each parameter need to match the type that
      *                      the procedure is expecting on the server.
@@ -142,17 +146,17 @@ public final class CafeJava {
     }
 
     /**
-     * Transforms a {@code WLResponse} that is emitted by an {@code Observable} containing a
-     * valid JSON payload into a new Observable for the targeted {@code Class} type. This can be
-     * done by passing the result of this method to the {@code compose} operator of RxJava. A
-     * variable number of member names can be provided for accessing JSON data that is nested
-     * arbitrarily deep inside the returned payload.
+     * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
+     * into a new {@code Observable} with the targeted {@code Class} type. This can be done by
+     * passing the result of this method to the {@code compose} operator of RxJava. A variable
+     * number of member names can be provided for accessing JSON data that is nested arbitrarily
+     * deep inside the response payload.
      *
      * @param clazz       Targeted {@code Class} type for the JSON payload to be serialized into.
      * @param memberNames Variable number of member names for accessing JSON data that is nested
-     *                    arbitrarily deep inside the returned payload.
+     *                    arbitrarily deep inside the response payload.
      * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
-     * . The input {@code Observable} must emit a {@code WLResponse}.
+     * . The input {@code Observable} must emit a {@code WLResponse} with a valid JSON payload.
      */
     @NonNull
     public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final Class<T> clazz,
@@ -167,19 +171,19 @@ public final class CafeJava {
     }
 
     /**
-     * Transforms a {@code WLResponse} that is emitted by an {@code Observable} containing a
-     * valid JSON payload into a new Observable for the targeted {@code TypeToken}. This can be
-     * done by passing the result of this method to the {@code compose} operator of RxJava. A
-     * {@code TypeToken} is necessary when the targeted type is parameterized, which is the case
-     * with {@code List}. A variable number of member names can be provided for accessing JSON
-     * data that is nested arbitrarily deep inside the returned payload.
+     * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
+     * into a new Observable for the targeted {@code TypeToken}. This can be done by passing the
+     * result of this method to the {@code compose} operator of RxJava. A {@code TypeToken} is
+     * necessary when the targeted type is a parameterized type, such as {@code List}. A variable
+     * number of member names can be provided for accessing JSON data that is nested arbitrarily
+     * deep inside the response payload.
      *
-     * @param typeToken   Captures the necessary type information for parameterized types, such as
-     *                    {@code List}.
+     * @param typeToken   Captures the necessary type information for the targeted parameterized
+     *                    type, such as {@code List}.
      * @param memberNames Variable number of member names for accessing JSON data that is nested
-     *                    arbitrarily deep inside the returned payload.
+     *                    arbitrarily deep inside the response payload.
      * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
-     * . The input {@code Observable} must emit a {@code WLResponse}.
+     * . The input {@code Observable} must emit a {@code WLResponse} with a valid JSON payload.
      */
     @NonNull
     public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final TypeToken<T> typeToken,
