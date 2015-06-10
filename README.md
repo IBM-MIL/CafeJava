@@ -133,7 +133,7 @@ This should return the following response:
   "isDeveloper": true,
   "isSuccessful": true,
   "age": 22,
-  "name": "FirstName LastName"
+  "name": "Johnny Appleseed"
 }
 ```
 In order for the Android sample app to connect to our local instance, we need to update wlclient.properties (found under the sample project's assets folder) by changing the value of the `wlServerHost` key to our machine's IP address.
