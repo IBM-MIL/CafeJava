@@ -136,7 +136,7 @@ This should return the following response:
   "name": "Johnny Appleseed"
 }
 ```
-In order for the Android sample app to connect to our local instance, we need to update wlclient.properties (found under the sample project's assets folder) by changing the value of the `wlServerHost` key to our machine's IP address.
+If we are deploying the sample app to the Android emulator, there is no need to update wlclient.properties, which is found under the sample project's assets folder. Otherwise, we will need to change the `wlServerHost` key to our machine's IP address.
 
 Note: A new wlclient.properties file gets generated under `/cafejava-sample/MFPSampleProject/apps/SampleAndroidFramework` each time you deploy the adapter. This file can simply replace the one found in the sample project's assets folder.
 
