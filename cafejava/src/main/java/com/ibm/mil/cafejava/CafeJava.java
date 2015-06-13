@@ -210,16 +210,21 @@ public final class CafeJava {
         String json = wlResponse.getResponseJSON().toString();
         JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
 
+        // For each member name, fetch the object it maps to until you reach the final member name.
+        // Once the final member name is reached, return its corresponding value.
         for (int i = 0, size = memberNames.length; i < size; i++) {
             String member = memberNames[i];
 
             if (i == size - 1) {
+                // last member name reached; return its value
                 return jsonObject.get(member);
             } else {
+                // more member names remain, therefore current member must map to an object
                 jsonObject = jsonObject.getAsJsonObject(member);
             }
         }
 
+        // no nesting required; return top-level object
         return jsonObject;
     }
 
