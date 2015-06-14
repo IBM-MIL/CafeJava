@@ -28,7 +28,7 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         WLClient.getInstance().invokeProcedure(invocationData, wlResponseListener);
     }
 
-    public class Builder {
+    public static class Builder {
         private final String adapterName;
         private final String procedureName;
         private Object[] parameters;

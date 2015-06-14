@@ -52,7 +52,7 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         }
     }
 
-    public class Builder {
+    public static class Builder {
         private final String adapterName;
         private final String procedureName;
         private HashMap<String, String> parameters;
