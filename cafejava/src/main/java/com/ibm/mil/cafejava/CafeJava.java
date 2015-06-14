@@ -145,6 +145,14 @@ public final class CafeJava {
         });
     }
 
+    public Observable<WLResponse> invokeProcedure(final ProcedureInvoker invoker) {
+        return Observable.create(new Observable.OnSubscribe<WLResponse>() {
+            @Override public void call(Subscriber<? super WLResponse> subscriber) {
+                invoker.invoke(new RxResponseListener(subscriber));
+            }
+        });
+    }
+
     /**
      * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
      * into a new {@code Observable} with the targeted {@code Class} type. This can be done by

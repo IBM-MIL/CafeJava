@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.ibm.mil.cafejava.CafeJava;
+import com.ibm.mil.cafejava.JSProcedureInvoker;
 import com.worklight.wlclient.api.WLResponse;
 
 import java.util.ArrayList;
@@ -91,8 +92,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         // handle spinner selections
         String procedureName = parent.getItemAtPosition(pos).toString();
-        Observable<WLResponse> procedureObservable = cafeJava
-                .invokeProcedure("SampleAdapter", procedureName);
+
+        Observable<WLResponse> procedureObservable = cafeJava.invokeProcedure(
+                new JSProcedureInvoker.Builder("SampleAdapter", procedureName).build());
+
         Observable<List<Person>> peopleObservable;
 
         switch (procedureName) {
@@ -121,8 +124,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 break;
         }
 
-        Subscription peopleSubscription = peopleObservable.observeOn(AndroidSchedulers.mainThread())
+        Subscription peopleSubscription = peopleObservable
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new PeopleSubscriber());
+
         subscriptions.add(peopleSubscription);
     }
 
