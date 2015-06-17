@@ -7,12 +7,15 @@ package com.ibm.mil.cafejava;
 
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLProcedureInvocationData;
+import com.worklight.wlclient.api.WLRequestOptions;
 import com.worklight.wlclient.api.WLResponseListener;
 
 public final class JSProcedureInvoker implements ProcedureInvoker {
     private final String adapterName;
     private final String procedureName;
     private Object[] parameters;
+    private int timeout;
+    private Object invocationContext;
 
     private JSProcedureInvoker(String adapterName, String procedureName) {
         this.adapterName = adapterName;
@@ -21,17 +24,23 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
 
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
-        // TODO: request options and compressed response
         WLProcedureInvocationData invocationData = new WLProcedureInvocationData(adapterName,
                 procedureName);
         invocationData.setParameters(parameters);
-        WLClient.getInstance().invokeProcedure(invocationData, wlResponseListener);
+
+        WLRequestOptions requestOptions = new WLRequestOptions();
+        requestOptions.setTimeout(timeout);
+        requestOptions.setInvocationContext(invocationContext);
+
+        WLClient.getInstance().invokeProcedure(invocationData, wlResponseListener, requestOptions);
     }
 
     public static class Builder {
         private final String adapterName;
         private final String procedureName;
         private Object[] parameters;
+        private int timeout = 30_000;
+        private Object invocationContext;
 
         public Builder(String adapterName, String procedureName) {
             this.adapterName = adapterName;
@@ -43,9 +52,24 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
+        public Builder timeout(int timeout) {
+            // negative values will be ignored
+            if (timeout >= 0) {
+                this.timeout = timeout;
+            }
+            return this;
+        }
+
+        public Builder invocationContext(Object invocationContext) {
+            this.invocationContext = invocationContext;
+            return this;
+        }
+
         public JSProcedureInvoker build() {
             JSProcedureInvoker invoker = new JSProcedureInvoker(adapterName, procedureName);
             invoker.parameters = parameters;
+            invoker.timeout = timeout;
+            invoker.invocationContext = invocationContext;
             return invoker;
         }
     }

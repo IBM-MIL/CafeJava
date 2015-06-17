@@ -38,8 +38,6 @@ import rx.subscriptions.CompositeSubscription;
  * @author Tanner Preiss (github @t-preiss)
  */
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
-
-    private CafeJava cafeJava;
     private CompositeSubscription subscriptions = new CompositeSubscription();
     private List<Person> peopleDataSet = new ArrayList<>();
     private ArrayAdapter<Person> peopleAdapter;
@@ -64,10 +62,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         peopleList.setAdapter(peopleAdapter);
         peopleList.setOnItemClickListener(new PeopleClickListener());
 
-        cafeJava = new CafeJava().setTimeout(10_000);
-
         // establish WL connection
-        Subscription connectionSubscription = cafeJava.connect(this)
+        Subscription connectionSubscription = CafeJava.connect(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<WLResponse>() {
                     @Override public void call(WLResponse wlResponse) {
@@ -93,7 +89,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         // handle spinner selections
         String procedureName = parent.getItemAtPosition(pos).toString();
 
-        Observable<WLResponse> procedureObservable = cafeJava.invokeProcedure(
+        Observable<WLResponse> procedureObservable = CafeJava.invokeProcedure(
                 new JSProcedureInvoker.Builder("SampleAdapter", procedureName).build());
 
         Observable<List<Person>> peopleObservable;

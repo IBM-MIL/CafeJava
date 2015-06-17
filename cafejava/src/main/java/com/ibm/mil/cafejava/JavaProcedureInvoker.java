@@ -34,6 +34,7 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     private final String procedureName;
     private HashMap<String, String> parameters;
     private @HttpMethod String httpMethod;
+    private int timeout;
 
     private JavaProcedureInvoker(String adapterName, String procedureName) {
         this.adapterName = adapterName;
@@ -42,10 +43,11 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
 
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
-        String url = "adapters/" + adapterName + "/" + "procedureName";
+        String url = "adapters/" + adapterName + "/" + procedureName;
         try {
             WLResourceRequest request = new WLResourceRequest(new URI(url), httpMethod);
             request.setQueryParameters(parameters);
+            request.setTimeout(timeout);
             request.send(wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -57,6 +59,7 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         private final String procedureName;
         private HashMap<String, String> parameters;
         private @HttpMethod String httpMethod = GET;
+        private int timeout = 30_000;
 
         public Builder(String adapterName, String procedureName) {
             this.adapterName = adapterName;
@@ -73,10 +76,19 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
+        public Builder timeout(int timeout) {
+            // negative values will be ignored
+            if (timeout >= 0) {
+                this.timeout = timeout;
+            }
+            return this;
+        }
+
         public JavaProcedureInvoker build() {
             JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, procedureName);
             invoker.parameters = parameters;
             invoker.httpMethod = httpMethod;
+            invoker.timeout = timeout;
             return invoker;
         }
     }
