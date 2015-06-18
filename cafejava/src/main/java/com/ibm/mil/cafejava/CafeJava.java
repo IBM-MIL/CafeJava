@@ -66,7 +66,7 @@ public final class CafeJava {
      * the {@code ProcedureInvoker} parameter that is passed in. This invocation is only
      * performed when there is a new {@code Subscriber} to the {@code Observable}. The {@code
      * Observable} will automatically perform its work on a dedicated background thread, so there
-     * is usually no need to ue the {@code subscribeOn} method of RxJava.
+     * is usually no need to use the {@code subscribeOn} method of RxJava.
      *
      * @param invoker Implementation for a procedure invocation, most commonly
      *                {@link JavaProcedureInvoker} or {@link JSProcedureInvoker}.

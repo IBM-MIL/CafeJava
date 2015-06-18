@@ -69,7 +69,7 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
-        /** Used a tagging mechanism to determine the origin of a {@code WLResponseListener}. */
+        /** Used as a tagging mechanism to determine the origin of a {@code WLResponseListener}. */
         public Builder invocationContext(Object invocationContext) {
             this.invocationContext = invocationContext;
             return this;
