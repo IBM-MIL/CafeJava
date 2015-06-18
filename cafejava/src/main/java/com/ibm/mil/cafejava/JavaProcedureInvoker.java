@@ -5,6 +5,8 @@
 
 package com.ibm.mil.cafejava;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
 import com.worklight.wlclient.api.WLResourceRequest;
@@ -82,18 +84,18 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             this.procedureName = procedureName;
         }
 
-        public Builder pathParameters(HashMap<String, String> parameters) {
+        public Builder pathParameters(@Nullable HashMap<String, String> parameters) {
             pathParameters = parameters;
             return this;
         }
 
-        public Builder queryParameters(HashMap<String, String> parameters) {
+        public Builder queryParameters(@Nullable HashMap<String, String> parameters) {
             queryParameters = parameters;
             return this;
         }
 
-        /** Expects an {@code HttpMethod} StringDef constant value */
-        public Builder httpMethod(@HttpMethod String httpMethod) {
+        /** Expects an {@code HttpMethod} StringDef constant value. Default is {@code GET}. */
+        public Builder httpMethod(@NonNull @HttpMethod String httpMethod) {
             this.httpMethod = httpMethod;
             return this;
         }

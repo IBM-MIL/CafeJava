@@ -5,6 +5,8 @@
 
 package com.ibm.mil.cafejava;
 
+import android.support.annotation.Nullable;
+
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLProcedureInvocationData;
 import com.worklight.wlclient.api.WLRequestOptions;
@@ -56,7 +58,7 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
             this.procedureName = procedureName;
         }
 
-        public Builder parameters(Object... parameters) {
+        public Builder parameters(@Nullable Object... parameters) {
             this.parameters = parameters;
             return this;
         }
@@ -70,7 +72,7 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         }
 
         /** Used as a tagging mechanism to determine the origin of a {@code WLResponseListener}. */
-        public Builder invocationContext(Object invocationContext) {
+        public Builder invocationContext(@Nullable Object invocationContext) {
             this.invocationContext = invocationContext;
             return this;
         }

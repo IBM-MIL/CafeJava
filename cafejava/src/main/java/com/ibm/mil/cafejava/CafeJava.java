@@ -72,7 +72,8 @@ public final class CafeJava {
      *                {@link JavaProcedureInvoker} or {@link JSProcedureInvoker}.
      * @return {@code Observable} that emits a {@code WLResponse} for an MFP procedure invocation.
      */
-    public static Observable<WLResponse> invokeProcedure(final ProcedureInvoker invoker) {
+    @NonNull
+    public static Observable<WLResponse> invokeProcedure(@NonNull final ProcedureInvoker invoker) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(Subscriber<? super WLResponse> subscriber) {
                 invoker.invoke(new RxResponseListener(subscriber));
