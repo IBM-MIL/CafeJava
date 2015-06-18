@@ -25,8 +25,8 @@ import rx.functions.Func1;
 import static rx.Observable.Transformer;
 
 /**
- * Configurable MFP client for establishing connections and invoking procedures in a reactive
- * manner. For a detailed guide on using this class, visit
+ * Collection of methods for dealing with MFP procedure invocations in a reactive manner. For a
+ * detailed guide on using the methods in this class, visit
  * <a href="https://github.com/t-preiss/CafeJava" target="_blank">the project's GitHub page</a> and
  * view the README.
  *
@@ -61,6 +61,17 @@ public final class CafeJava {
         });
     }
 
+    /**
+     * Creates an {@code Observable} that emits a {@code WLResponse} after attempting to invoke
+     * the {@code ProcedureInvoker} parameter that is passed in. This invocation is only
+     * performed when there is a new {@code Subscriber} to the {@code Observable}. The {@code
+     * Observable} will automatically perform its work on a dedicated background thread, so there
+     * is usually no need to ue the {@code subscribeOn} method of RxJava.
+     *
+     * @param invoker Implementation for a procedure invocation, most commonly
+     *                {@link JavaProcedureInvoker} or {@link JSProcedureInvoker}.
+     * @return {@code Observable} that emits a {@code WLResponse} for an MFP procedure invocation.
+     */
     public static Observable<WLResponse> invokeProcedure(final ProcedureInvoker invoker) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override public void call(Subscriber<? super WLResponse> subscriber) {
@@ -71,12 +82,12 @@ public final class CafeJava {
 
     /**
      * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
-     * into a new {@code Observable} with the targeted {@code Class} type. This can be done by
+     * into a new {@code Observable} with the targeted {@code Class} literal. This can be done by
      * passing the result of this method to the {@code compose} operator of RxJava. A variable
      * number of member names can be provided for accessing JSON data that is nested arbitrarily
      * deep inside the response payload.
      *
-     * @param clazz       Targeted {@code Class} type for the JSON payload to be serialized into.
+     * @param clazz       Targeted {@code Class} for the JSON payload to be serialized into.
      * @param memberNames Variable number of member names for accessing JSON data that is nested
      *                    arbitrarily deep inside the response payload.
      * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava

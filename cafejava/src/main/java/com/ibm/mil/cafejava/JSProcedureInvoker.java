@@ -10,6 +10,14 @@ import com.worklight.wlclient.api.WLProcedureInvocationData;
 import com.worklight.wlclient.api.WLRequestOptions;
 import com.worklight.wlclient.api.WLResponseListener;
 
+/**
+ * Implementation for invoking a procedure from a JavaScript based adapter.
+ *
+ * @see JavaProcedureInvoker
+ *
+ * @author John Petitto  (github @jpetitto)
+ * @author Tanner Preiss (github @t-preiss)
+ */
 public final class JSProcedureInvoker implements ProcedureInvoker {
     private final String adapterName;
     private final String procedureName;
@@ -35,6 +43,7 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         WLClient.getInstance().invokeProcedure(invocationData, wlResponseListener, requestOptions);
     }
 
+    /** Configures and instantiates a {@code JSProcedureInvoker}. */
     public static class Builder {
         private final String adapterName;
         private final String procedureName;
@@ -52,14 +61,15 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
+        /** Measured in millis. Negative values will be ignored. Default is 30ms. */
         public Builder timeout(int timeout) {
-            // negative values will be ignored
             if (timeout >= 0) {
                 this.timeout = timeout;
             }
             return this;
         }
 
+        /** Used a tagging mechanism to determine the origin of a {@code WLResponseListener}. */
         public Builder invocationContext(Object invocationContext) {
             this.invocationContext = invocationContext;
             return this;

@@ -16,7 +16,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+/**
+ * Implementation for invoking a procedure from a Java based adapter.
+ *
+ * @see JSProcedureInvoker
+ *
+ * @author John Petitto  (github @jpetitto)
+ * @author Tanner Preiss (github @t-preiss)
+ */
 public final class JavaProcedureInvoker implements ProcedureInvoker {
+    /** StringDef for basic HTTP method types: {@code GET, POST, PUT, DELETE}. */
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
             GET,
@@ -25,9 +34,13 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             DELETE
     })
     public @interface HttpMethod {}
+    /** Annotated with the {@code HttpMethod} StringDef */
     public static final String GET = "GET";
+    /** Annotated with the {@code HttpMethod} StringDef */
     public static final String POST = "POST";
+    /** Annotated with the {@code HttpMethod} StringDef */
     public static final String PUT = "PUT";
+    /** Annotated with the {@code HttpMethod} StringDef */
     public static final String DELETE = "DELETE";
 
     private final String adapterName;
@@ -55,6 +68,7 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         }
     }
 
+    /** Configures and instantiates a {@code JavaProcedureInvoker}. */
     public static class Builder {
         private final String adapterName;
         private final String procedureName;
@@ -78,13 +92,14 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
+        /** Expects an {@code HttpMethod} StringDef constant value */
         public Builder httpMethod(@HttpMethod String httpMethod) {
             this.httpMethod = httpMethod;
             return this;
         }
 
+        /** Measured in millis. Negative values will be ignored. Default is 30ms. */
         public Builder timeout(int timeout) {
-            // negative values will be ignored
             if (timeout >= 0) {
                 this.timeout = timeout;
             }
