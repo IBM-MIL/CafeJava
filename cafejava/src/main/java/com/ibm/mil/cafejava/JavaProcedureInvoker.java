@@ -32,7 +32,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
 
     private final String adapterName;
     private final String procedureName;
-    private HashMap<String, String> parameters;
+    private HashMap<String, String> pathParameters;
+    private HashMap<String, String> queryParameters;
     private @HttpMethod String httpMethod;
     private int timeout;
 
@@ -46,9 +47,9 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         String url = "adapters/" + adapterName + "/" + procedureName;
         try {
             WLResourceRequest request = new WLResourceRequest(new URI(url), httpMethod);
-            request.setQueryParameters(parameters);
+            request.setQueryParameters(queryParameters);
             request.setTimeout(timeout);
-            request.send(wlResponseListener);
+            request.send(pathParameters, wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -57,7 +58,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     public static class Builder {
         private final String adapterName;
         private final String procedureName;
-        private HashMap<String, String> parameters;
+        private HashMap<String, String> pathParameters;
+        private HashMap<String, String> queryParameters;
         private @HttpMethod String httpMethod = GET;
         private int timeout = 30_000;
 
@@ -66,8 +68,13 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             this.procedureName = procedureName;
         }
 
-        public Builder parameters(HashMap<String, String> parameters) {
-            this.parameters = parameters;
+        public Builder pathParameters(HashMap<String, String> parameters) {
+            pathParameters = parameters;
+            return this;
+        }
+
+        public Builder queryParameters(HashMap<String, String> parameters) {
+            queryParameters = parameters;
             return this;
         }
 
@@ -86,7 +93,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
 
         public JavaProcedureInvoker build() {
             JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, procedureName);
-            invoker.parameters = parameters;
+            invoker.pathParameters = pathParameters;
+            invoker.queryParameters = queryParameters;
             invoker.httpMethod = httpMethod;
             invoker.timeout = timeout;
             return invoker;
