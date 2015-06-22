@@ -93,7 +93,7 @@ public final class CafeJava {
      * background thread, so there is usually no need to use the {@code subscribeOn} method of
      * RxJava.
      *
-     * @param context
+     * @param context This parameter is the Android {@code Context}, for example the Android Activity that creates the {@code WLClient}.
      * @return {@code Observable} that emits a {@code WLResponse} for an MFP connection.
      */
     @NonNull
@@ -236,7 +236,7 @@ public final class CafeJava {
     }
 
     private static class RxResponseListener implements WLResponseListener {
-        private Subscriber<? super WLResponse> subscriber;
+        private final Subscriber<? super WLResponse> subscriber;
 
         RxResponseListener(Subscriber<? super WLResponse> subscriber) {
             this.subscriber = subscriber;
@@ -253,5 +253,4 @@ public final class CafeJava {
             subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
         }
     }
-
 }

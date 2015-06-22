@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">CafeJava-Sample</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="first_last">First Last</string>
+    <string name="twenty_years">20 years of age</string>
     <string-array name="procedure_array">
         <item>getPersonFlat</item>
         <item>getPersonNested</item>

@@ -7,13 +7,13 @@
         android:id="@+id/person_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="First Last" />
+        android:text="@string/first_last" />
 
     <TextView
         android:id="@+id/person_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/person_name"
-        android:text="20 years of age" />
+        android:text="@string/twenty_years" />
 
 </RelativeLayout>
