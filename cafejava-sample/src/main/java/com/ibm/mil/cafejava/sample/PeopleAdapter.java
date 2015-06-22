@@ -16,18 +16,13 @@ import android.widget.TextView;
 import java.util.List;
 
 class PeopleAdapter extends ArrayAdapter<Person> {
-    private Activity activity;
-    private List<Person> dataset;
+    private final Activity activity;
+    private final List<Person> dataset;
 
     public PeopleAdapter(Context context, List<Person> dataset) {
         super(context, R.layout.person_item, dataset);
         activity = (Activity) context;
         this.dataset = dataset;
-    }
-
-    static class ViewHolder {
-        TextView personName;
-        TextView personAge;
     }
 
     @Override public View getView(int pos, View convertView, ViewGroup parent) {
@@ -53,4 +48,8 @@ class PeopleAdapter extends ArrayAdapter<Person> {
         return convertView;
     }
 
+    static class ViewHolder {
+        TextView personName;
+        TextView personAge;
+    }
 }

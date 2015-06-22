@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     private CafeJava cafeJava;
     private CompositeSubscription subscriptions = new CompositeSubscription();
-    private List<Person> peopleDataSet = new ArrayList<>();
+    private final List<Person> peopleDataSet = new ArrayList<>();
     private ArrayAdapter<Person> peopleAdapter;
 
     @Override
@@ -131,28 +131,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         // not implemented
     }
 
-    private class PersonListMapper implements Func1<Person, List<Person>> {
-        @Override public List<Person> call(Person person) {
-            return Collections.singletonList(person);
-        }
-    }
-
-    private class PeopleSubscriber extends Subscriber<List<Person>> {
-        @Override public void onNext(List<Person> people) {
-            peopleDataSet.clear();
-            peopleDataSet.addAll(people);
-            peopleAdapter.notifyDataSetChanged();
-        }
-
-        @Override public void onCompleted() {
-            // not implemented
-        }
-
-        @Override public void onError(Throwable throwable) {
-            Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -173,5 +151,27 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class PersonListMapper implements Func1<Person, List<Person>> {
+        @Override public List<Person> call(Person person) {
+            return Collections.singletonList(person);
+        }
+    }
+
+    private class PeopleSubscriber extends Subscriber<List<Person>> {
+        @Override public void onNext(List<Person> people) {
+            peopleDataSet.clear();
+            peopleDataSet.addAll(people);
+            peopleAdapter.notifyDataSetChanged();
+        }
+
+        @Override public void onCompleted() {
+            // not implemented
+        }
+
+        @Override public void onError(Throwable throwable) {
+            Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
