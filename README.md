@@ -1,6 +1,6 @@
 # CafeJava
 
-Reactive API for invoking MFP procedures from an Android client. Support for auto-serialization of JSON responses is also provided in a reactive manner.
+Reactive API for invoking MobileFirst Platform (MFP) procedures from an Android client. Support for auto-serialization of JSON responses is also provided in a reactive manner.
 
 Connecting to an MFP instance from an `Activity` is as simple as:
 
@@ -53,7 +53,7 @@ cafeJava.invokeProcedure("adapter", "procedureOne");
 cafeJava.invokeProcedure("adapter", "procedureTwo");
 ```
 
-CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` object of the type we want to serialize to and chain our `Observable<WLResponse>` with the compose operator:
+CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` literal of the type we want to serialize to and chain our `Observable<WLResponse>` with the compose operator:
 
 ``` json
 {
