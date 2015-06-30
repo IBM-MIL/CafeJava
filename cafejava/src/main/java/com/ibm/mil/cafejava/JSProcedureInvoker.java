@@ -7,10 +7,12 @@ package com.ibm.mil.cafejava;
 
 import android.support.annotation.Nullable;
 
-import com.worklight.wlclient.api.WLClient;
-import com.worklight.wlclient.api.WLProcedureInvocationData;
-import com.worklight.wlclient.api.WLRequestOptions;
+import com.google.gson.Gson;
+import com.worklight.wlclient.api.WLResourceRequest;
 import com.worklight.wlclient.api.WLResponseListener;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Implementation for invoking a procedure from a JavaScript based adapter.
@@ -34,15 +36,15 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
 
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
-        WLProcedureInvocationData invocationData = new WLProcedureInvocationData(adapterName,
-                procedureName);
-        invocationData.setParameters(parameters);
-
-        WLRequestOptions requestOptions = new WLRequestOptions();
-        requestOptions.setTimeout(timeout);
-        requestOptions.setInvocationContext(invocationContext);
-
-        WLClient.getInstance().invokeProcedure(invocationData, wlResponseListener, requestOptions);
+        try {
+            URI path = new URI("/adapters/" + adapterName + "/" + procedureName);
+            WLResourceRequest request = new WLResourceRequest(path, WLResourceRequest.GET);
+            request.setQueryParameter("params", new Gson().toJson(parameters));
+            request.setTimeout(timeout);
+            request.send(wlResponseListener);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     /** Configures and instantiates a {@code JSProcedureInvoker}. */
