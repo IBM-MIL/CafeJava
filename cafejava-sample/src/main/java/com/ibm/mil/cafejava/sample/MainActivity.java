@@ -7,6 +7,7 @@ package com.ibm.mil.cafejava.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,16 +17,15 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.gson.reflect.TypeToken;
 import com.ibm.mil.cafejava.CafeJava;
-import com.ibm.mil.cafejava.JSProcedureInvoker;
+import com.ibm.mil.cafejava.JavaProcedureInvoker;
 import com.worklight.wlclient.api.WLResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -86,6 +86,28 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        HashMap<String, String> pathParams = new HashMap<>();
+        pathParams.put("username", "bobcat");
+
+        CafeJava.invokeProcedure(new JavaProcedureInvoker.Builder("JavaSampleAdapter", "users")
+                .pathParameters(pathParams)
+                .build())
+                .compose(CafeJava.serializeTo(Person.class))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Person>() {
+                    @Override public void call(Person person) {
+                        Toast.makeText(MainActivity.this, person.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override public void call(Throwable throwable) {
+                        Log.i(MainActivity.class.getName(), "Error Message: " + throwable
+                                .getMessage());
+                        Toast.makeText(MainActivity.this, throwable.getMessage(), Toast
+                                .LENGTH_LONG).show();
+                    }
+                });
+
+        /*
         // handle spinner selections
         String procedureName = parent.getItemAtPosition(pos).toString();
 
@@ -125,6 +147,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 .subscribe(new PeopleSubscriber());
 
         subscriptions.add(peopleSubscription);
+        */
     }
 
     @Override

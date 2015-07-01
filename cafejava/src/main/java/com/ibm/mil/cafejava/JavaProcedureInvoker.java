@@ -59,9 +59,9 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
 
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
-        String url = "adapters/" + adapterName + "/" + procedureName;
         try {
-            WLResourceRequest request = new WLResourceRequest(new URI(url), httpMethod);
+            URI path = new URI("adapters/" + adapterName + "/" + procedureName);
+            WLResourceRequest request = new WLResourceRequest(path, httpMethod);
             request.setQueryParameters(queryParameters);
             request.setTimeout(timeout);
             request.send(pathParameters, wlResponseListener);
@@ -74,8 +74,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     public static class Builder {
         private final String adapterName;
         private final String procedureName;
-        private HashMap<String, String> pathParameters;
-        private HashMap<String, String> queryParameters;
+        private HashMap<String, String> pathParameters = new HashMap<>();
+        private HashMap<String, String> queryParameters = new HashMap<>();
         private @HttpMethod String httpMethod = GET;
         private int timeout = 30_000;
 
