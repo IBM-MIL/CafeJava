@@ -50,7 +50,6 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     private HashMap<String, String> pathParameters;
     private HashMap<String, String> queryParameters;
     private @HttpMethod String httpMethod;
-    private int timeout;
 
     private JavaProcedureInvoker(String adapterName, String procedureName) {
         this.adapterName = adapterName;
@@ -63,7 +62,6 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             URI path = new URI("adapters/" + adapterName + "/" + procedureName);
             WLResourceRequest request = new WLResourceRequest(path, httpMethod);
             request.setQueryParameters(queryParameters);
-            request.setTimeout(timeout);
             request.send(pathParameters, wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -77,7 +75,6 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         private HashMap<String, String> pathParameters = new HashMap<>();
         private HashMap<String, String> queryParameters = new HashMap<>();
         private @HttpMethod String httpMethod = GET;
-        private int timeout = 30_000;
 
         public Builder(String adapterName, String procedureName) {
             this.adapterName = adapterName;
@@ -100,20 +97,11 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
-        /** Measured in millis. Negative values will be ignored. Default is 30ms. */
-        public Builder timeout(int timeout) {
-            if (timeout >= 0) {
-                this.timeout = timeout;
-            }
-            return this;
-        }
-
         public JavaProcedureInvoker build() {
             JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, procedureName);
             invoker.pathParameters = pathParameters;
             invoker.queryParameters = queryParameters;
             invoker.httpMethod = httpMethod;
-            invoker.timeout = timeout;
             return invoker;
         }
     }

@@ -26,7 +26,6 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
     private final String adapterName;
     private final String procedureName;
     private Object[] parameters;
-    private int timeout;
     private Object invocationContext;
 
     private JSProcedureInvoker(String adapterName, String procedureName) {
@@ -40,7 +39,6 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
             URI path = new URI("/adapters/" + adapterName + "/" + procedureName);
             WLResourceRequest request = new WLResourceRequest(path, WLResourceRequest.GET);
             request.setQueryParameter("params", new Gson().toJson(parameters));
-            request.setTimeout(timeout);
             request.send(wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -52,7 +50,6 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         private final String adapterName;
         private final String procedureName;
         private Object[] parameters;
-        private int timeout = 30_000;
         private Object invocationContext;
 
         public Builder(String adapterName, String procedureName) {
@@ -65,14 +62,6 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
-        /** Measured in millis. Negative values will be ignored. Default is 30ms. */
-        public Builder timeout(int timeout) {
-            if (timeout >= 0) {
-                this.timeout = timeout;
-            }
-            return this;
-        }
-
         /** Used as a tagging mechanism to determine the origin of a {@code WLResponseListener}. */
         public Builder invocationContext(@Nullable Object invocationContext) {
             this.invocationContext = invocationContext;
@@ -82,7 +71,6 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         public JSProcedureInvoker build() {
             JSProcedureInvoker invoker = new JSProcedureInvoker(adapterName, procedureName);
             invoker.parameters = parameters;
-            invoker.timeout = timeout;
             invoker.invocationContext = invocationContext;
             return invoker;
         }
