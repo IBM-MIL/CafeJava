@@ -25,13 +25,13 @@ import java.net.URISyntaxException;
 public final class JSProcedureInvoker implements ProcedureInvoker {
     private final String adapterName;
     private final String procedureName;
-    private Object[] parameters;
+    private Object[] params;
 
     public JSProcedureInvoker(String adapterName, String procedureName,
-                              @Nullable Object... parameters) {
+                              @Nullable Object... params) {
         this.adapterName = adapterName;
         this.procedureName = procedureName;
-        this.parameters = parameters;
+        this.params = params;
     }
 
     @Override
@@ -39,7 +39,7 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         try {
             URI path = new URI("/adapters/" + adapterName + "/" + procedureName);
             WLResourceRequest request = new WLResourceRequest(path, WLResourceRequest.GET);
-            request.setQueryParameter("params", new Gson().toJson(parameters));
+            request.setQueryParameter("params", new Gson().toJson(params));
             request.send(wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();

@@ -6,7 +6,6 @@
 package com.ibm.mil.cafejava;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
 import com.worklight.wlclient.api.WLResourceRequest;
@@ -17,6 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation for invoking a procedure from a Java based adapter.
@@ -47,8 +47,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
 
     private final String adapterName;
     private final String procedureName;
-    private HashMap<String, String> pathParameters;
-    private HashMap<String, String> queryParameters;
+    private HashMap<String, String> pathParams;
+    private HashMap<String, String> queryParams;
     private @HttpMethod String httpMethod;
 
     private JavaProcedureInvoker(String adapterName, String procedureName) {
@@ -61,8 +61,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         try {
             URI path = new URI("adapters/" + adapterName + "/" + procedureName);
             WLResourceRequest request = new WLResourceRequest(path, httpMethod);
-            request.setQueryParameters(queryParameters);
-            request.send(pathParameters, wlResponseListener);
+            request.setQueryParameters(queryParams);
+            request.send(pathParams, wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -72,8 +72,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     public static class Builder {
         private final String adapterName;
         private final String procedureName;
-        private HashMap<String, String> pathParameters = new HashMap<>();
-        private HashMap<String, String> queryParameters = new HashMap<>();
+        private HashMap<String, String> pathParams = new HashMap<>();
+        private HashMap<String, String> queryParams = new HashMap<>();
         private @HttpMethod String httpMethod = GET;
 
         public Builder(String adapterName, String procedureName) {
@@ -81,13 +81,23 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             this.procedureName = procedureName;
         }
 
-        public Builder pathParameters(@Nullable HashMap<String, String> parameters) {
-            pathParameters = parameters;
+        public Builder pathParam(@NonNull String name, @NonNull String value) {
+            pathParams.put(name, value);
             return this;
         }
 
-        public Builder queryParameters(@Nullable HashMap<String, String> parameters) {
-            queryParameters = parameters;
+        public Builder pathParams(@NonNull Map<String, String> params) {
+            pathParams.putAll(params);
+            return this;
+        }
+
+        public Builder queryParam(@NonNull String name, @NonNull String value) {
+            queryParams.put(name, value);
+            return this;
+        }
+
+        public Builder queryParams(@NonNull Map<String, String> params) {
+            queryParams.putAll(params);
             return this;
         }
 
@@ -99,8 +109,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
 
         public JavaProcedureInvoker build() {
             JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, procedureName);
-            invoker.pathParameters = pathParameters;
-            invoker.queryParameters = queryParameters;
+            invoker.pathParams = pathParams;
+            invoker.queryParams = queryParams;
             invoker.httpMethod = httpMethod;
             return invoker;
         }
