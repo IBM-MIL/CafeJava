@@ -46,21 +46,21 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     public static final String DELETE = WLResourceRequest.DELETE;
 
     private final String adapterName;
-    private final String procedureName;
+    private final String path;
     private HashMap<String, String> pathParams;
     private HashMap<String, String> queryParams;
     private @HttpMethod String httpMethod;
 
-    private JavaProcedureInvoker(String adapterName, String procedureName) {
+    private JavaProcedureInvoker(String adapterName, String path) {
         this.adapterName = adapterName;
-        this.procedureName = procedureName;
+        this.path = path;
     }
 
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
         try {
-            URI path = new URI("adapters/" + adapterName + "/" + procedureName);
-            WLResourceRequest request = new WLResourceRequest(path, httpMethod);
+            URI uri = new URI("adapters/" + adapterName + "/" + path);
+            WLResourceRequest request = new WLResourceRequest(uri, httpMethod);
             request.setQueryParameters(queryParams);
             request.send(pathParams, wlResponseListener);
         } catch (URISyntaxException e) {
@@ -71,14 +71,14 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     /** Configures and instantiates a {@code JavaProcedureInvoker}. */
     public static class Builder {
         private final String adapterName;
-        private final String procedureName;
+        private final String path;
         private HashMap<String, String> pathParams = new HashMap<>();
         private HashMap<String, String> queryParams = new HashMap<>();
         private @HttpMethod String httpMethod = GET;
 
-        public Builder(String adapterName, String procedureName) {
+        public Builder(String adapterName, String path) {
             this.adapterName = adapterName;
-            this.procedureName = procedureName;
+            this.path = path;
         }
 
         public Builder pathParam(@NonNull String name, @NonNull String value) {
@@ -108,7 +108,7 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
         }
 
         public JavaProcedureInvoker build() {
-            JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, procedureName);
+            JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, path);
             invoker.pathParams = pathParams;
             invoker.queryParams = queryParams;
             invoker.httpMethod = httpMethod;
