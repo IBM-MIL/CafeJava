@@ -37,13 +37,13 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     })
     public @interface HttpMethod {}
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String GET = "GET";
+    public static final String GET = WLResourceRequest.GET;
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String POST = "POST";
+    public static final String POST = WLResourceRequest.POST;
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String PUT = "PUT";
+    public static final String PUT = WLResourceRequest.PUT;
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String DELETE = "DELETE";
+    public static final String DELETE = WLResourceRequest.DELETE;
 
     private final String adapterName;
     private final String procedureName;
