@@ -90,7 +90,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         String procedureName = parent.getItemAtPosition(pos).toString();
 
         Observable<WLResponse> procedureObservable = CafeJava.invokeProcedure(
-                new JSProcedureInvoker.Builder("JSSampleAdapter", procedureName).build());
+                new JSProcedureInvoker("JSSampleAdapter", procedureName));
 
         Observable<List<Person>> peopleObservable;
 
