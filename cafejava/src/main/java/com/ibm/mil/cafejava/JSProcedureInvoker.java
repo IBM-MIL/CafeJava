@@ -23,8 +23,8 @@ import java.net.URISyntaxException;
  * @author Tanner Preiss (github @t-preiss)
  */
 public final class JSProcedureInvoker implements ProcedureInvoker {
-    private final String adapterName;
-    private final String procedureName;
+    private String adapterName;
+    private String procedureName;
     private Object[] params;
 
     public JSProcedureInvoker(String adapterName, String procedureName,

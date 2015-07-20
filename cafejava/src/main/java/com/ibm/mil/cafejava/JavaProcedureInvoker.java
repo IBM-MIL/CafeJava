@@ -45,8 +45,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     /** Annotated with the {@code HttpMethod} StringDef */
     public static final String DELETE = WLResourceRequest.DELETE;
 
-    private final String adapterName;
-    private final String path;
+    private String adapterName;
+    private String path;
     private HashMap<String, String> pathParams;
     private HashMap<String, String> queryParams;
     private @HttpMethod String httpMethod;
@@ -59,13 +59,28 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
         try {
-            URI uri = new URI("adapters/" + adapterName + "/" + path);
+            URI uri = new URI("adapters/" + adapterName + buildPath(path, pathParams));
             WLResourceRequest request = new WLResourceRequest(uri, httpMethod);
             request.setQueryParameters(queryParams);
             request.send(pathParams, wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String buildPath(String path, Map<String, String> params) {
+        // insert initial forward slash if missing
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        // inject each path param into path
+        for (Map.Entry<String, String> param : params.entrySet()) {
+            // replace param name delimited by curly braces with param value
+            path = path.replace("{" + param.getKey() + "}", param.getValue());
+        }
+
+        return path;
     }
 
     /** Configures and instantiates a {@code JavaProcedureInvoker}. */
