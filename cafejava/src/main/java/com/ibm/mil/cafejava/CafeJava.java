@@ -179,7 +179,9 @@ public final class CafeJava {
 
         @Override
         public void onFailure(WLFailResponse wlFailResponse) {
-            subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
+            String failureMessage = String.format("Error Code: %s\nError Message: %s",
+                    wlFailResponse.getErrorCode(), wlFailResponse.getErrorMsg());
+            subscriber.onError(new Throwable(failureMessage));
         }
     }
 
