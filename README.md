@@ -48,7 +48,7 @@ new CafeJava().invokeProcedure("adapter", "procedure", "arg1", "arg2", "arg3");
 Request options, such as a timeout, can be specified on a `CafeJava` instance. This instance can then be shared across multiple procedure invocations:
 
 ``` java
-CafeJava cafeJava = new CafeJava.setTimeout(5000);
+CafeJava cafeJava = new CafeJava().setTimeout(5000);
 cafeJava.invokeProcedure("adapter", "procedureOne");
 cafeJava.invokeProcedure("adapter", "procedureTwo");
 ```
