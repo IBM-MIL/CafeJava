@@ -1,4 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'milbuild'
+    groupId = 'com.ibm.mil'
+    artifactId = 'cafejava'
+    publishVersion = '1.0.0'
+    desc = 'RxJava extensions for the MobileFirst Platform (MFP) Android API'
+    website = 'https://github.com/IBM-MIL/CafeJava'
+}
 
 android {
     compileSdkVersion 22
@@ -15,6 +25,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
