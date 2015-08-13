@@ -21,11 +21,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.ibm.mil.database.SampleDatabase;
-import com.ibm.mil.database.models.User;
+import com.ibm.mil.database.models.President;
 import com.worklight.adapters.rest.api.WLServerAPI;
 import com.worklight.adapters.rest.api.WLServerAPIProvider;
 
-@Path("/users")
+@Path("/presidents")
 public class JavaSampleAdapterResource {
 	/*
 	 * For more info on JAX-RS see
@@ -47,10 +47,10 @@ public class JavaSampleAdapterResource {
 	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/{username}"
 	 */
 	@GET
-	@Path("/{username}")
+	@Path("/{president_name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUser(@PathParam("username") String username) {
-		User returnedUser = SampleDatabase.getSingleton().getUser(username);
+	public Response getUser(@PathParam("president_name") String presidentName) {
+		President returnedUser = SampleDatabase.getSingleton().getPresident(presidentName);
 
 		if (returnedUser == null) {
 			return Response.serverError()
@@ -67,10 +67,10 @@ public class JavaSampleAdapterResource {
 	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/{username}"
 	 */
 	@DELETE
-	@Path("/{username}")
+	@Path("/{president_name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteUser(@PathParam("username") String username) {
-		User deletedUser = SampleDatabase.getSingleton().deleteUser(username);
+	public Response deleteUser(@PathParam("president_name") String presidentName) {
+		President deletedUser = SampleDatabase.getSingleton().deleteUser(presidentName);
 		
 		if (deletedUser == null) {
 			return Response.serverError()
@@ -86,15 +86,15 @@ public class JavaSampleAdapterResource {
 	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/{username}"
 	 */
 	@PUT
-	@Path("/{username}")
+	@Path("/{president_name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateUser(@PathParam("username") String username, User newUser) {
-		User updatedUser = SampleDatabase.getSingleton().updateUser(username, newUser);
+	public Response updateUser(@PathParam("president_name") String presidentName, President newPresident) {
+		President updatedUser = SampleDatabase.getSingleton().updateUser(presidentName, newPresident);
 		
 		if (updatedUser == null) {
 			return Response.serverError()
-					.entity("PUT FAILED: Error updating previous user" + username)
+					.entity("PUT FAILED: Error updating previous user" + presidentName)
 					.build();
 		}
 		
@@ -108,8 +108,8 @@ public class JavaSampleAdapterResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createUser(User newUser) {
-		User createdUser = SampleDatabase.getSingleton().createUser(newUser);
+	public Response createUser(President newPresident) {
+		President createdUser = SampleDatabase.getSingleton().createUser(newPresident);
 		
 		if (createdUser == null) {
 			return Response.serverError()
