@@ -6,7 +6,6 @@
 package com.ibm.mil.cafejava;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
 import com.worklight.wlclient.api.WLResourceRequest;
@@ -17,6 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation for invoking a procedure from a Java based adapter.
@@ -37,60 +37,82 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     })
     public @interface HttpMethod {}
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String GET = "GET";
+    public static final String GET = WLResourceRequest.GET;
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String POST = "POST";
+    public static final String POST = WLResourceRequest.POST;
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String PUT = "PUT";
+    public static final String PUT = WLResourceRequest.PUT;
     /** Annotated with the {@code HttpMethod} StringDef */
-    public static final String DELETE = "DELETE";
+    public static final String DELETE = WLResourceRequest.DELETE;
 
-    private final String adapterName;
-    private final String procedureName;
-    private HashMap<String, String> pathParameters;
-    private HashMap<String, String> queryParameters;
+    private String adapterName;
+    private String path;
+    private HashMap<String, String> pathParams;
+    private HashMap<String, String> queryParams;
     private @HttpMethod String httpMethod;
-    private int timeout;
 
-    private JavaProcedureInvoker(String adapterName, String procedureName) {
+    private JavaProcedureInvoker(String adapterName, String path) {
         this.adapterName = adapterName;
-        this.procedureName = procedureName;
+        this.path = path;
     }
 
     @Override
     public void invoke(WLResponseListener wlResponseListener) {
         try {
-            URI path = new URI("adapters/" + adapterName + "/" + procedureName);
-            WLResourceRequest request = new WLResourceRequest(path, httpMethod);
-            request.setQueryParameters(queryParameters);
-            request.setTimeout(timeout);
-            request.send(pathParameters, wlResponseListener);
+            URI uri = new URI("adapters/" + adapterName + buildPath(path, pathParams));
+            WLResourceRequest request = new WLResourceRequest(uri, httpMethod);
+            request.setQueryParameters(queryParams);
+            request.send(pathParams, wlResponseListener);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }
 
+    private static String buildPath(String path, Map<String, String> params) {
+        // insert initial forward slash if missing
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        // inject each path param into path
+        for (Map.Entry<String, String> param : params.entrySet()) {
+            // replace param name delimited by curly braces with param value
+            path = path.replace("{" + param.getKey() + "}", param.getValue());
+        }
+
+        return path;
+    }
+
     /** Configures and instantiates a {@code JavaProcedureInvoker}. */
     public static class Builder {
         private final String adapterName;
-        private final String procedureName;
-        private HashMap<String, String> pathParameters = new HashMap<>();
-        private HashMap<String, String> queryParameters = new HashMap<>();
+        private final String path;
+        private HashMap<String, String> pathParams = new HashMap<>();
+        private HashMap<String, String> queryParams = new HashMap<>();
         private @HttpMethod String httpMethod = GET;
-        private int timeout = 30_000;
 
-        public Builder(String adapterName, String procedureName) {
+        public Builder(String adapterName, String path) {
             this.adapterName = adapterName;
-            this.procedureName = procedureName;
+            this.path = path;
         }
 
-        public Builder pathParameters(@Nullable HashMap<String, String> parameters) {
-            pathParameters = parameters;
+        public Builder pathParam(@NonNull String name, @NonNull String value) {
+            pathParams.put(name, value);
             return this;
         }
 
-        public Builder queryParameters(@Nullable HashMap<String, String> parameters) {
-            queryParameters = parameters;
+        public Builder pathParams(@NonNull Map<String, String> params) {
+            pathParams.putAll(params);
+            return this;
+        }
+
+        public Builder queryParam(@NonNull String name, @NonNull String value) {
+            queryParams.put(name, value);
+            return this;
+        }
+
+        public Builder queryParams(@NonNull Map<String, String> params) {
+            queryParams.putAll(params);
             return this;
         }
 
@@ -100,20 +122,11 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
             return this;
         }
 
-        /** Measured in millis. Negative values will be ignored. Default is 30ms. */
-        public Builder timeout(int timeout) {
-            if (timeout >= 0) {
-                this.timeout = timeout;
-            }
-            return this;
-        }
-
         public JavaProcedureInvoker build() {
-            JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, procedureName);
-            invoker.pathParameters = pathParameters;
-            invoker.queryParameters = queryParameters;
+            JavaProcedureInvoker invoker = new JavaProcedureInvoker(adapterName, path);
+            invoker.pathParams = pathParams;
+            invoker.queryParams = queryParams;
             invoker.httpMethod = httpMethod;
-            invoker.timeout = timeout;
             return invoker;
         }
     }
