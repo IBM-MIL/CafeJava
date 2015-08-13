@@ -142,7 +142,21 @@ Note: A new wlclient.properties file gets generated under `/cafejava-sample/MFPS
 
 ## Download
 
-For now, clone the project and add the `:cafejava` module as a library dependency to your project. We will soon upload an AAR to jcenter for easy gradle support.
+Download [the latest AAR](https://bintray.com/artifact/download/milbuild/maven/com/ibm/mil/cafejava/1.0.0/cafejava-1.0.0.aar) or grab via Gradle:
+
+``` groovy
+compile 'com.ibm.mil:cafejava:1.0.0'
+```
+
+or Maven:
+
+``` xml
+<dependency>
+  <groupId>com.ibm.mil</groupId>
+  <artifactId>cafejava</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
 ## License
 ```
