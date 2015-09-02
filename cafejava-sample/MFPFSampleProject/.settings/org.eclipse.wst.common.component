@@ -2,7 +2,6 @@
     <wb-module deploy-name="MFPFSampleProject">
         <wb-resource deploy-path="/" source-path="/server/java"/>
         <wb-resource deploy-path="/" source-path="/adapters/JavaPresidentAdapter/src"/>
-        <wb-resource deploy-path="/" source-path="/server/java/resources"/>
         <property name="context-root" value="MFPFSampleProject"/>
     </wb-module>
 </project-modules>

@@ -22,7 +22,8 @@ public class SampleDatabase {
 
 	// to prevent creating another instance of Singleton
 	private SampleDatabase() {
-		presidents = loadPresidentsFromFile(PRESIDENTS_JSON_FILENAME);
+//		presidents = loadPresidentsFromFile(PRESIDENTS_JSON_FILENAME);
+		presidents = new HashMap<Integer, President>();
 		presidents.put(1, new President.PresidentBuilder("George Washington").birthYear(1732).deathYear(1799).tookOffice("1789-04-30").leftOffice("1797-03-04").party("No Party").build());
 		presidents.put(2, new President.PresidentBuilder("John Adams").birthYear(1735).deathYear(1826).tookOffice("1797-03-04").leftOffice("1801-03-04").party("Federalist").build());
 	}
@@ -65,8 +66,7 @@ public class SampleDatabase {
 			String jsonFile) {
 		T collection;
 		try {
-			URL url = SampleDatabase.class.getClassLoader().getResource(
-					jsonFile);
+			URL url = SampleDatabase.class.getClassLoader().getResource(jsonFile);
 			BufferedReader br = new BufferedReader(
 					new FileReader(url.getFile()));
 			collection = gson.fromJson(br, typeToken.getType());
