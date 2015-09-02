@@ -5,7 +5,7 @@
  *    disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 */
 
-package com.ibm.mil;
+package com.ibm.mil.adapters;
 
 import java.util.logging.Logger;
 import com.worklight.wink.extensions.MFPJAXRSApplication;

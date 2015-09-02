@@ -16,5 +16,5 @@
 		<connectionPolicy xsi:type="wl:NullConnectionPolicyType"></connectionPolicy>
 	</connectivity>
 	
-	<JAXRSApplicationClass>com.ibm.mil.JavaPresidentAdapterApplication</JAXRSApplicationClass>
+	<JAXRSApplicationClass>com.ibm.mil.adapters.JavaPresidentAdapterApplication</JAXRSApplicationClass>
 </wl:adapter>

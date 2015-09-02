@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="MFPFSampleProject">
+        <wb-resource deploy-path="/" source-path="/server/java"/>
+        <wb-resource deploy-path="/" source-path="/adapters/JavaPresidentAdapter/src"/>
+        <wb-resource deploy-path="/" source-path="/server/java/resources"/>
         <property name="context-root" value="MFPFSampleProject"/>
     </wb-module>
 </project-modules>
