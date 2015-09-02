@@ -26,17 +26,17 @@ import com.worklight.adapters.rest.api.WLServerAPI;
 import com.worklight.adapters.rest.api.WLServerAPIProvider;
 
 @Path("/presidents")
-public class JavaSampleAdapterResource {
-	/*
+public class JavaPresidentAdapterResource {
+	/**
 	 * For more info on JAX-RS see
 	 * https://jsr311.java.net/nonav/releases/1.1/index.html
 	 */
-	public JavaSampleAdapterResource() {
+	public JavaPresidentAdapterResource() {
 		
 	}
 	
 	// Define logger (Standard java.util.Logger)
-	static Logger logger = Logger.getLogger(JavaSampleAdapterResource.class
+	static Logger logger = Logger.getLogger(JavaPresidentAdapterResource.class
 			.getName());
 
 	// Define the server api to be able to perform server operations
@@ -44,7 +44,7 @@ public class JavaSampleAdapterResource {
 
 	/*
 	 * Path for method:
-	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/{username}"
+	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/presidents/{username}"
 	 */
 	@GET
 	@Path("/{president_name}")
@@ -54,7 +54,7 @@ public class JavaSampleAdapterResource {
 
 		if (returnedUser == null) {
 			return Response.serverError()
-					.entity("GET FAILED: Could not find user matching given username")
+					.entity("GET FAILED: Could not find a president matching given username")
 					.build();
 		}
 
@@ -64,65 +64,64 @@ public class JavaSampleAdapterResource {
 
 	/*
 	 * Path for method:
-	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/{username}"
+	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/presidents/{username}"
 	 */
 	@DELETE
 	@Path("/{president_name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteUser(@PathParam("president_name") String presidentName) {
-		President deletedUser = SampleDatabase.getSingleton().deleteUser(presidentName);
+	public Response deletePresident(@PathParam("president_name") String presidentName) {
+		President deletedPresident = SampleDatabase.getSingleton().deleteUser(presidentName);
 		
-		if (deletedUser == null) {
+		if (deletedPresident == null) {
 			return Response.serverError()
-					.entity("DELETE FAILED: Could not find user matching given username")
+					.entity("DELETE FAILED: Could not find a president matching given username")
 					.build();
 		}
 		
-		return Response.ok().entity(deletedUser).build();
+		return Response.ok().entity(deletedPresident).build();
 	}
 	
 	/*
 	 * Path for method:
-	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/{username}"
+	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/presidents/{username}"
 	 */
 	@PUT
-	@Path("/{president_name}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateUser(@PathParam("president_name") String presidentName, President newPresident) {
-		President updatedUser = SampleDatabase.getSingleton().updateUser(presidentName, newPresident);
+	public Response updatePresident(@PathParam("president_name") String presidentName, President newPresident) {
+		President updatedPresident = SampleDatabase.getSingleton().updateUser(presidentName, newPresident);
 		
-		if (updatedUser == null) {
+		if (updatedPresident == null) {
 			return Response.serverError()
-					.entity("PUT FAILED: Error updating previous user" + presidentName)
+					.entity("PUT FAILED: Error updating previous president" + presidentName)
 					.build();
 		}
 		
-		return Response.ok().entity(updatedUser).build();
+		return Response.ok().entity(updatedPresident).build();
 	}
 	
 	/*
 	 * Path for method:
-	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/users/"
+	 * "<server address>/MFPSampleProject/adapters/JavaSampleAdapter/presidents/"
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createUser(President newPresident) {
-		President createdUser = SampleDatabase.getSingleton().createUser(newPresident);
+	public Response createPresident(President newPresident) {
+		President createdPresident = SampleDatabase.getSingleton().createUser(newPresident);
 		
-		if (createdUser == null) {
+		if (createdPresident == null) {
 			return Response.serverError()
-					.entity("POST FAILED: Error creating new user")
+					.entity("POST FAILED: Error creating a new president")
 					.build();
 		}
 		
-		return Response.ok().entity(createdUser).build();
+		return Response.ok().entity(createdPresident).build();
 	}
 
 
 	public static void main(String[] args) {
-		JavaSampleAdapterResource test = new JavaSampleAdapterResource();
+		JavaPresidentAdapterResource test = new JavaPresidentAdapterResource();
 		System.out.println(test.getUser("bobcat"));
 	}
 }

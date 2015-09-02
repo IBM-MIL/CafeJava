@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="com.worklight.studio.plugin.classpath.SERVER_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="server/java"/>
-	<classpathentry kind="src" output="adapters/JavaSampleAdapter/bin" path="adapters/JavaSampleAdapter/src"/>
+	<classpathentry kind="src" output="adapters/JavaPresidentAdapter/bin" path="adapters/JavaPresidentAdapter/src"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

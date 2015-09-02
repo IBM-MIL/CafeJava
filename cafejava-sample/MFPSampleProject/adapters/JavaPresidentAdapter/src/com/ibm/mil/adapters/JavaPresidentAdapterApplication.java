@@ -10,9 +10,9 @@ package com.ibm.mil.adapters;
 import java.util.logging.Logger;
 import com.worklight.wink.extensions.MFPJAXRSApplication;
 
-public class JavaSampleAdapterApplication extends MFPJAXRSApplication{
+public class JavaPresidentAdapterApplication extends MFPJAXRSApplication{
 
-	static Logger logger = Logger.getLogger(JavaSampleAdapterApplication.class.getName());
+	static Logger logger = Logger.getLogger(JavaPresidentAdapterApplication.class.getName());
 	
 	@Override
 	protected void init() throws Exception {

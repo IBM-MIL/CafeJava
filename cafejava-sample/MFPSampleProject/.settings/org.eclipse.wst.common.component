@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="MFPSampleProject">
-        <wb-resource deploy-path="/" source-path="/adapters/JavaSampleAdapter/src"/>
+        <wb-resource deploy-path="/" source-path="/adapters/JavaPresidentAdapter/src"/>
         <property name="context-root" value="MFPSampleProject"/>
     </wb-module>
 </project-modules>
