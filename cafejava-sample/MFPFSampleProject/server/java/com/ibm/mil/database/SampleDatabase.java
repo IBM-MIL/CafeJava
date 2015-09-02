@@ -36,16 +36,16 @@ public class SampleDatabase {
 		return presidents.get(presidentNumber);
 	}
 
-	public President updateUser(int presidentNumber, President updatedUser) {
+	public President updatePresident(int presidentNumber, President updatedUser) {
 		assert (updatedUser != null);
 		return presidents.put(presidentNumber, updatedUser);
 	}
 
-	public President deleteUser(int presidentNumber) {
+	public President deletePresident(int presidentNumber) {
 		return presidents.remove(presidentNumber);
 	}
 
-	public President createUser(President newPresident) {
+	public President createPresident(President newPresident) {
 		return presidents.put(newPresident.getNumber(), newPresident);
 	}
 

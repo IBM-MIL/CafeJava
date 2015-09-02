@@ -72,7 +72,7 @@ public class JavaPresidentAdapterResource {
 	@Path("/{president_number}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deletePresident(@PathParam("president_number") int presidentNumber) {
-		President deletedPresident = SampleDatabase.getSingleton().deleteUser(presidentNumber);
+		President deletedPresident = SampleDatabase.getSingleton().deletePresident(presidentNumber);
 		
 		if (deletedPresident == null) {
 			return Response.serverError()
@@ -92,7 +92,7 @@ public class JavaPresidentAdapterResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updatePresident(@PathParam("president_number") int presidentNumber, President newPresident) {
-		President updatedPresident = SampleDatabase.getSingleton().updateUser(presidentNumber, newPresident);
+		President updatedPresident = SampleDatabase.getSingleton().updatePresident(presidentNumber, newPresident);
 		
 		if (updatedPresident == null) {
 			return Response.serverError()
@@ -111,7 +111,7 @@ public class JavaPresidentAdapterResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createPresident(President newPresident) {
-		President createdPresident = SampleDatabase.getSingleton().createUser(newPresident);
+		President createdPresident = SampleDatabase.getSingleton().createPresident(newPresident);
 		
 		if (createdPresident == null) {
 			return Response.serverError()
