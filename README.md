@@ -1,119 +1,44 @@
 # CafeJava
 
-Reactive API for invoking MFP procedures from an Android client. Support for auto-serialization of JSON responses is also provided in a reactive manner.
+Reactive API for invoking [MobileFirst Platform](http://www-03.ibm.com/software/products/en/mobilefirstplatform) (MFP) procedures from an Android client.
 
-Connecting to an MFP instance from an `Activity` is as simple as:
-
-``` java
-new CafeJava().connect(this)
-              .subscribe(new Action1<WLResponse>() {
-                  @Override public void call(WLResponse wlResponse) {
-                      // onSuccess
-                  }
-              }, new Action1<Throwable>() {
-                  @Override public void call(Throwable throwable) {
-                      // onFailure
-                  }
-              });
-```
-
-Invoking a procedure for a given adapter is done in similar fashion:
+To connect to an MFP instance, simply call:
 
 ``` java
-new CafeJava().invokeProcedure("adapter", "procedure")
-              .subscribe(new Action1<WLResponse>() {
-                  @Override public void call(WLResponse wlResponse) {
-                      // onSuccess
-                  }
-              }, new Action1<Throwable>() {
-                  @Override public void call(Throwable throwable) {
-                      // onFailure
-                  }
-              });
+Observable<WLResponse> connect = CafeJava.connect(context);
+connect.subscribe();
 ```
 
-We can use [retrolambda](https://github.com/orfjackal/retrolambda) to reduce the clunky syntax of anonymous classes:
+With MFP 7.0 came the introduction of Java adapters. We can create a `JavaProcedureInvoker` that will handle the request for a procedure invocation:
 
 ``` java
-new CafeJava().invokeProcedure("adapter", "procedure")
-              .subscribe(response -> {}, throwable -> {});
+ProcedureInvoker invoker = new JavaProcedureInvoker.Builder("adapterName", "path/{path_param}")
+        .pathParam("path_param", value)
+        .queryParam("param_name", value)
+        .httpMethod(HttpMethod.GET /* default is GET */)
+        .build();
 ```
 
-Furthermore, we can easily provide the necessary parameters for a procedure invocation:
+We can then pass our `ProcedureInvoker` instance to CafeJava to trigger an invocation:
 
 ``` java
-new CafeJava().invokeProcedure("adapter", "procedure", "arg1", "arg2", "arg3");
+Observable<WLResponse> invocation = CafeJava.invokeProcedure(invoker);
+invocation.subscribe(); // invocation is performed per subscriber
 ```
 
-Request options, such as a timeout, can be specified on a `CafeJava` instance. This instance can then be shared across multiple procedure invocations:
+If we have a JavaScript based adapter, we can use a `JSProcedureInvoker` object instead.
+
+For any `WLResponse` containing a valid JSON payload, CafeJava can serialize it automatically for us:
 
 ``` java
-CafeJava cafeJava = new CafeJava.setTimeout(5000);
-cafeJava.invokeProcedure("adapter", "procedureOne");
-cafeJava.invokeProcedure("adapter", "procedureTwo");
+Observable<Person> person = invocation.compose(CafeJava.serializeTo(Person.class));
 ```
 
-CafeJava also provides auto-serialization support for procedure invocations that return valid JSON. We can supply the `Class` object of the type we want to serialize to and chain our `Observable<WLResponse>` with the compose operator:
-
-``` json
-{
-  "name": "John Smith",
-  "age": 42,
-  "isDeveloper": true
-}
-```
+If we're expecting back an array of objects, we can alternatively supply a `TypeToken`:
 
 ``` java
-Observable<Person> personObservable =
-    observable.compose(CafeJava.serializeTo(Person.class));
-```
-
-For more complex responses where the desired data for serialization is nested, we can supply the list of member names that will obtain the serializable data:
-
-``` json
-{
-  "result": {
-    "person": {
-      "name": "John Smith",
-      "age": 42,
-      "isDeveloper": true
-    }
-  }
-}
-```
-
-``` java
-observable.compose(CafeJava.serializeTo(Person.class, "result", "person"));
-```
-
-If the response returns an array, we can use `TypeToken` from the Gson library to help us:
-
-``` json
-{
-  "result": [
-    {
-      "name": "John Smith",
-      "age": 42,
-      "isDeveloper": true
-    },
-    {
-      "name": "Robert Jones",
-      "age": 26,
-      "isDeveloper": false
-    },
-    {
-      "name": "Mary Davis",
-      "age": 33,
-      "isDeveloper": true
-    }
-  ]
-}
-```
-
-``` java
-TypeToken<List<Person>> typeToken = new TypeToken<List<Person>>(){};
-Observable<List<Person>> peopleObservable =
-    observable.compose(CafeJava.serializeTo(typeToken, "result"));
+TypeToken<List<Person>> token = new TypeToken<List<Person>>() {};
+Observable<List<Person>> people = invocation.compose(CafeJava.serializeTo(token));
 ```
 
 ## Running the sample app
@@ -142,7 +67,21 @@ Note: A new wlclient.properties file gets generated under `/cafejava-sample/MFPS
 
 ## Download
 
-For now, clone the project and add the `:cafejava` module as a library dependency to your project. We will soon upload an AAR to jcenter for easy gradle support.
+Download [the latest AAR](https://bintray.com/artifact/download/milbuild/maven/com/ibm/mil/cafejava/1.0.0/cafejava-1.0.0.aar) or grab via Gradle:
+
+``` groovy
+compile 'com.ibm.mil:cafejava:1.0.0'
+```
+
+or Maven:
+
+``` xml
+<dependency>
+  <groupId>com.ibm.mil</groupId>
+  <artifactId>cafejava</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
 ## License
 ```
