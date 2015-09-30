@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.ibm.mil.cafejava.sample"
-        minSdkVersion 7
+        minSdkVersion 9
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
