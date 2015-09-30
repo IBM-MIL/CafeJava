@@ -137,6 +137,8 @@ android {
 }
 ```
 
+The `wlclient.properties` file generated with your MFP project also needs to be added to your app's `assets` folder.
+
 CafeJava requires a **minimum SDK version of 9** or above.
 
 ## Running the sample app
