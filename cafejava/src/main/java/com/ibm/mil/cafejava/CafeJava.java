@@ -7,7 +7,6 @@ package com.ibm.mil.cafejava;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -16,8 +15,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
-import com.worklight.wlclient.api.WLProcedureInvocationData;
-import com.worklight.wlclient.api.WLRequestOptions;
 import com.worklight.wlclient.api.WLResponse;
 import com.worklight.wlclient.api.WLResponseListener;
 
@@ -37,52 +34,9 @@ import static rx.Observable.Transformer;
  * @author Tanner Preiss (github @t-preiss)
  */
 public final class CafeJava {
-    private int timeout = 30_000;
-    private Object invocationContext;
 
-    /**
-     * The timeout that will be used for any MFP call invoked from this instance of {@code
-     * CafeJava}.
-     *
-     * @param timeout Number of millis to wait for an MFP call to respond.
-     * @return The current instance of {@code CafeJava} to allow for easy call chaining.
-     */
-    public CafeJava setTimeout(int timeout) {
-        if (timeout >= 0) {
-            this.timeout = timeout;
-        }
-        return this;
-    }
-
-    /**
-     * @return Number of millis to wait for an MFP call to respond.
-     */
-    public int getTimeout() {
-        return timeout;
-    }
-
-    /**
-     * An {@code invocationContext} serves as a mechanism for tagging a {@code WLResponse}. This
-     * can be useful when the source of a {@code WLResponse} is unknown. This context will be used
-     * for any MFP call invoked from this instance of {@code CafeJava}.
-     *
-     * @param invocationContext Returned as part of any {@code WLResponse} that was originally
-     *                          invoked from this instance of {@code CafeJava}.
-     * @return The current instance of {@code CafeJava} to allow for easy call chaining.
-     */
-    @NonNull
-    public CafeJava setInvocationContext(@Nullable Object invocationContext) {
-        this.invocationContext = invocationContext;
-        return this;
-    }
-
-    /**
-     * @return The context (object) for any {@code WLResponse} that was originally invoked from
-     * this instance of {@code CafeJava}.
-     */
-    @Nullable
-    public Object getInvocationContext() {
-        return invocationContext;
+    private CafeJava() {
+        throw new AssertionError(CafeJava.class.getName() + " is non-instantiable");
     }
 
     /**
@@ -93,66 +47,48 @@ public final class CafeJava {
      * background thread, so there is usually no need to use the {@code subscribeOn} method of
      * RxJava.
      *
-     * @param context This parameter is the Android {@code Context}, for example the Android Activity that creates the {@code WLClient}.
+     * @param context
      * @return {@code Observable} that emits a {@code WLResponse} for an MFP connection.
      */
     @NonNull
-    public Observable<WLResponse> connect(@NonNull final Context context) {
+    public static Observable<WLResponse> connect(@NonNull final Context context) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
             @Override
             public void call(Subscriber<? super WLResponse> subscriber) {
                 WLClient client = WLClient.createInstance(context);
-                client.connect(new RxResponseListener(subscriber), getRequestOptions());
+                client.connect(new RxResponseListener(subscriber));
             }
         });
     }
 
     /**
-     * Creates an {@code Observable} that emits a {@code WLResponse} after attempting invocation
-     * of the specified procedure for the given adapter. This invocation is only performed when
-     * there is a new {@code Subscriber} to the {@code Observable}. The {@code Observable} will
-     * automatically perform its work on a dedicated background thread, so there is usually no
-     * need to use the {@code subscribeOn} method of RxJava.
+     * Creates an {@code Observable} that emits a {@code WLResponse} after attempting to invoke
+     * the {@code ProcedureInvoker} parameter that is passed in. This invocation is only
+     * performed when there is a new {@code Subscriber} to the {@code Observable}. The {@code
+     * Observable} will automatically perform its work on a dedicated background thread, so there
+     * is usually no need to use the {@code subscribeOn} method of RxJava.
      *
-     * @param adapterName   Name of the targeted adapter.
-     * @param procedureName Name of the targeted procedure for the specified adapter.
-     * @param parameters    Variable number of parameters that the specified procedure is
-     *                      expecting. The types of each parameter need to match the type that
-     *                      the procedure is expecting on the server.
+     * @param invoker Implementation for a procedure invocation, most commonly
+     *                {@link JavaProcedureInvoker} or {@link JSProcedureInvoker}.
      * @return {@code Observable} that emits a {@code WLResponse} for an MFP procedure invocation.
      */
     @NonNull
-    public Observable<WLResponse> invokeProcedure(@NonNull final String adapterName,
-                                                  @NonNull final String procedureName,
-                                                  @Nullable final Object... parameters) {
-
+    public static Observable<WLResponse> invokeProcedure(@NonNull final ProcedureInvoker invoker) {
         return Observable.create(new Observable.OnSubscribe<WLResponse>() {
-            @Override
-            public void call(Subscriber<? super WLResponse> subscriber) {
-                WLClient client = WLClient.getInstance();
-                if (client == null) {
-                    subscriber.onError(new Throwable("WLClient instance does not exist"));
-                    return;
-                }
-
-                WLProcedureInvocationData invocationData =
-                        new WLProcedureInvocationData(adapterName, procedureName, false);
-                invocationData.setParameters(parameters);
-
-                client.invokeProcedure(invocationData, new RxResponseListener(subscriber),
-                        getRequestOptions());
+            @Override public void call(Subscriber<? super WLResponse> subscriber) {
+                invoker.invoke(new RxResponseListener(subscriber));
             }
         });
     }
 
     /**
      * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
-     * into a new {@code Observable} with the targeted {@code Class} type. This can be done by
+     * into a new {@code Observable} with the targeted {@code Class} literal. This can be done by
      * passing the result of this method to the {@code compose} operator of RxJava. A variable
      * number of member names can be provided for accessing JSON data that is nested arbitrarily
      * deep inside the response payload.
      *
-     * @param clazz       Targeted {@code Class} type for the JSON payload to be serialized into.
+     * @param clazz       Targeted {@code Class} for the JSON payload to be serialized into.
      * @param memberNames Variable number of member names for accessing JSON data that is nested
      *                    arbitrarily deep inside the response payload.
      * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
@@ -228,13 +164,6 @@ public final class CafeJava {
         return jsonObject;
     }
 
-    private WLRequestOptions getRequestOptions() {
-        WLRequestOptions requestOptions = new WLRequestOptions();
-        requestOptions.setTimeout(timeout);
-        requestOptions.setInvocationContext(invocationContext);
-        return requestOptions;
-    }
-
     private static class RxResponseListener implements WLResponseListener {
         private final Subscriber<? super WLResponse> subscriber;
 
@@ -250,7 +179,9 @@ public final class CafeJava {
 
         @Override
         public void onFailure(WLFailResponse wlFailResponse) {
-            subscriber.onError(new Throwable(wlFailResponse.getErrorMsg()));
+            String failureMessage = String.format("Error Code: %s\nError Message: %s",
+                    wlFailResponse.getErrorCode(), wlFailResponse.getErrorMsg());
+            subscriber.onError(new Throwable(failureMessage));
         }
     }
 }

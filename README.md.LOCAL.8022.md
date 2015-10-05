@@ -41,29 +41,47 @@ TypeToken<List<Person>> token = new TypeToken<List<Person>>() {};
 Observable<List<Person>> people = invocation.compose(CafeJava.serializeTo(token));
 ```
 
-## Installation
-In your app's `build.gradle` file:
+## Running the sample app
+We will use the [MFP CLI](https://developer.ibm.com/mobilefirstplatform/install/#clui) to deploy the MFP sample project to our localhost.
 
-``` gradle
+From the `/cafejava-sample/MFPSampleProject` directory, issue the following command to build and deploy the MFP adapters:
+```
+mfp bd
+```
+We can verify that our local instance is working properly by invoking one of the sample procedures:
+```
+mfp adapter call SampleAdapter/getPersonFlat
+```
+This should return the following response:
+```
+{
+  "isDeveloper": true,
+  "isSuccessful": true,
+  "age": 22,
+  "name": "Johnny Appleseed"
+}
+```
+If we are deploying the sample app to the Android emulator, there is no need to update wlclient.properties, which is found under the sample project's assets folder. Otherwise, we will need to change the `wlServerHost` key to our machine's IP address.
+
+Note: A new wlclient.properties file gets generated under `/cafejava-sample/MFPSampleProject/apps/SampleAndroidFramework` each time you deploy the adapter. This file can simply replace the one found in the sample project's assets folder.
+
+## Download
+
+Download [the latest AAR](https://bintray.com/artifact/download/milbuild/maven/com/ibm/mil/cafejava/1.0.0/cafejava-1.0.0.aar) or grab via Gradle:
+
+``` groovy
 compile 'com.ibm.mil:cafejava:1.0.0'
 ```
 
-In the same file, add the following `packagingOptions` to the `android` closure:
+or Maven:
 
-``` gradle
-android {
-    ...
-    packagingOptions {
-        pickFirst 'META-INF/ASL2.0'
-        pickFirst 'META-INF/LICENSE'
-        pickFirst 'META-INF/NOTICE'
-    }
-}
+``` xml
+<dependency>
+  <groupId>com.ibm.mil</groupId>
+  <artifactId>cafejava</artifactId>
+  <version>1.0.0</version>
+</dependency>
 ```
-
-The `wlclient.properties` file generated with your MFP project also needs to be added to your app's `assets` folder.
-
-CafeJava requires a **minimum SDK version of 9** or above.
 
 ## License
 ```
