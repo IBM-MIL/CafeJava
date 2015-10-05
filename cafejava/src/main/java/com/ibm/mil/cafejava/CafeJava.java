@@ -25,15 +25,9 @@ import rx.functions.Func1;
 import static rx.Observable.Transformer;
 
 /**
-<<<<<<< HEAD
- * Collection of methods for dealing with MFP procedure invocations in a reactive manner. For a
- * detailed guide on using the methods in this class, visit
- * <a href="https://github.com/t-preiss/CafeJava" target="_blank">the project's GitHub page</a> and
-=======
  * Configurable MFP client for establishing connections and invoking procedures in a reactive
  * manner. For a detailed guide on using this class, visit
  * <a href="https://github.com/IBM-MIL/CafeJava" target="_blank">the project's GitHub page</a> and
->>>>>>> master
  * view the README.
  *
  * @author John Petitto  (github @jpetitto)
