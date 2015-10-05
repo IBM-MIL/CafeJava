@@ -47,7 +47,7 @@ public final class CafeJava {
      * background thread, so there is usually no need to use the {@code subscribeOn} method of
      * RxJava.
      *
-     * @param context This parameter is the Android {@code Context}, for example the Android Activity that creates the {@code WLClient}.
+     * @param context
      * @return {@code Observable} that emits a {@code WLResponse} for an MFP connection.
      */
     @NonNull
