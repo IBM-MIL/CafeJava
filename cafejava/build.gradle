@@ -1,14 +1,30 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'milbuild'
+    groupId = 'com.ibm.mil'
+    artifactId = 'cafejava'
+    publishVersion = '1.0.0'
+    desc = 'RxJava extensions for the MobileFirst Platform (MFP) Android API'
+    website = 'https://github.com/IBM-MIL/CafeJava'
+}
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 22
+        minSdkVersion 9
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
     buildTypes {
         release {
@@ -20,7 +36,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-annotations:22.1.1'
+    compile 'com.ibm.mobile.foundation:ibmmobilefirstplatformfoundation:7.1.0.0'
+    compile 'com.android.support:support-annotations:23.0.1'
     compile 'io.reactivex:rxjava:1.0.10'
     compile 'com.google.code.gson:gson:2.3.1'
     testCompile 'junit:junit:4.12'
