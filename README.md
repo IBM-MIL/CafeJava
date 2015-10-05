@@ -45,7 +45,7 @@ Observable<List<Person>> people = invocation.compose(CafeJava.serializeTo(token)
 In your app's `build.gradle` file:
 
 ``` gradle
-compile 'com.ibm.mil:cafejava:1.0.0'
+compile 'com.ibm.mil:cafejava:2.0.0'
 ```
 
 In the same file, add the following `packagingOptions` to the `android` closure:
