@@ -141,30 +141,6 @@ The `wlclient.properties` file generated with your MFP project also needs to be 
 
 CafeJava requires a **minimum SDK version of 9** or above.
 
-## Running the sample app
-We will use the [MFP CLI](https://developer.ibm.com/mobilefirstplatform/install/#clui) to deploy the MFP sample project to our localhost.
-
-From the `/cafejava-sample/MFPSampleProject` directory, issue the following command to build and deploy the MFP adapters:
-```
-mfp bd
-```
-We can verify that our local instance is working properly by invoking one of the sample procedures:
-```
-mfp adapter call SampleAdapter/getPersonFlat
-```
-This should return the following response:
-```
-{
-  "isDeveloper": true,
-  "isSuccessful": true,
-  "age": 22,
-  "name": "Johnny Appleseed"
-}
-```
-If we are deploying the sample app to the Android emulator, there is no need to update wlclient.properties, which is found under the sample project's assets folder. Otherwise, we will need to change the `wlServerHost` key to our machine's IP address.
-
-Note: A new wlclient.properties file gets generated under `/cafejava-sample/MFPSampleProject/apps/SampleAndroidFramework` each time you deploy the adapter. This file can simply replace the one found in the sample project's assets folder.
-
 ## License
 ```
 Licensed Materials - Property of IBM
