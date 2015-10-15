@@ -2,17 +2,19 @@ package com.ibm.mil.cafejava;
 
 import com.worklight.wlclient.api.WLResponse;
 
-import junit.framework.Assert;
-
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GsonConverterTest {
     private Observable<WLResponse> observable;
@@ -20,11 +22,11 @@ public class GsonConverterTest {
     @Before public void before() {
         Person person = new Person("John", 25, true);
 
-        JSONObject jsonObject = Mockito.mock(JSONObject.class);
-        Mockito.when(jsonObject.toString()).thenReturn(person.toString());
+        JSONObject jsonObject = mock(JSONObject.class);
+        when(jsonObject.toString()).thenReturn(person.toString());
 
-        WLResponse wlResponse = Mockito.mock(WLResponse.class);
-        Mockito.when(wlResponse.getResponseJSON()).thenReturn(jsonObject);
+        WLResponse wlResponse = mock(WLResponse.class);
+        when(wlResponse.getResponseJSON()).thenReturn(jsonObject);
 
         observable = Observable.just(wlResponse);
     }
@@ -37,11 +39,11 @@ public class GsonConverterTest {
         subscriber.assertTerminalEvent();
 
         List<Person> persons = subscriber.getOnNextEvents();
-        Assert.assertEquals(1, persons.size());
+        assertEquals(1, persons.size());
 
         Person person = persons.get(0);
-        Assert.assertEquals("John", person.name);
-        Assert.assertEquals(25, person.age);
-        Assert.assertEquals(true, person.isDev);
+        assertEquals("John", person.name);
+        assertEquals(25, person.age);
+        assertTrue(person.isDev);
     }
 }
