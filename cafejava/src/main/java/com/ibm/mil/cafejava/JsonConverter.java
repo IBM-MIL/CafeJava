@@ -13,14 +13,39 @@ import java.io.IOException;
 import rx.Observable;
 import rx.Subscriber;
 
+/**
+ * A custom RxJava operator for converting a valid JSON payload from a WLResponse into the
+ * corresponding Java class representation. To apply the operator to an existing
+ * {@code Observable}, pass an instance of this class to the {@code lift} operator.
+ *
+ * For converting objects, use the {@code Class<T>} constructor. For arrays, use the
+ * {@code TypeReference<T>} constructor.
+ *
+ * @param <T> Type of object that the response will be converted into
+ *
+ * @author John Petitto  (github @jpetitto)
+ * @author Tanner Preiss (github @t-preiss)
+ */
 public class JsonConverter<T> implements Observable.Operator<T, WLResponse> {
     private Class<T> clazz;
     private TypeReference<T> reference;
 
+    /**
+     * Allows for conversion from JSON objects.
+     *
+     * @param clazz The targeted class for conversion
+     */
     public JsonConverter(@NonNull Class<T> clazz) {
         this.clazz = clazz;
     }
 
+    /**
+     * Allows for conversion from JSON arrays. {@code TypeReference<T>} must be used for converting
+     * to a type of {@code List<T>}. To do this, you would call:
+     * {@code new TypeReference<List<T>>() {}}.
+     *
+     * @param reference The targeted {@code List<T>} for conversion
+     */
     public JsonConverter(@NonNull TypeReference<T> reference) {
         this.reference = reference;
     }
