@@ -22,9 +22,9 @@ public class JsonConverterTest {
     private TestSubscriber<Person> subscriber;
 
     @Test public void testSimpleObject() {
-        Person testPerson = new Person("John", 25, true);
+        Person person = new Person("John", 25, true);
 
-        createMocks(testPerson);
+        createMocks(person);
 
         observable.lift(new JsonConverter<>(Person.class)).subscribe(subscriber);
 
@@ -33,7 +33,7 @@ public class JsonConverterTest {
 
         List<Person> persons = subscriber.getOnNextEvents();
         assertEquals(1, persons.size());
-        assertEquals(testPerson, persons.get(0));
+        assertEquals(person, persons.get(0));
     }
 
     @Test public void testSimpleArray() {
@@ -52,6 +52,45 @@ public class JsonConverterTest {
                 }).subscribe(subscriber);
 
         subscriber.assertValues(firstPerson, secondPerson);
+    }
+
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+    @Test public void testBadObject() {
+        createMocks("Not a Person");
+
+        observable.lift(new JsonConverter<>(Person.class)).subscribe(subscriber);
+
+        subscriber.assertNoValues();
+        subscriber.assertTerminalEvent();
+
+        List<Throwable> errors = subscriber.getOnErrorEvents();
+        assertEquals(1, errors.size());
+
+        Throwable t = errors.get(0);
+        assertEquals("Could not convert JSON payload: Not a Person", t.getMessage());
+    }
+
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+    @Test public void testBadArray() {
+        Person person = new Person("John", 25, true);
+        createMocks(person);
+
+        observable.lift(new JsonConverter<>(new TypeReference<List<Person>>() {}))
+                .flatMap(new Func1<List<Person>, Observable<Person>>() {
+                    @Override
+                    public Observable<Person> call(List<Person> persons) {
+                        return Observable.from(persons);
+                    }
+                }).subscribe(subscriber);
+
+        subscriber.assertNoValues();
+        subscriber.assertTerminalEvent();
+
+        List<Throwable> errors = subscriber.getOnErrorEvents();
+        assertEquals(1, errors.size());
+
+        Throwable t = errors.get(0);
+        assertEquals("Could not convert JSON payload: " + person.toString(), t.getMessage());
     }
 
     private void createMocks(Object object) {
