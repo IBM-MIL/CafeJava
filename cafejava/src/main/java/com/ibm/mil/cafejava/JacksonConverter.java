@@ -1,5 +1,6 @@
 package com.ibm.mil.cafejava;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.worklight.wlclient.api.WLResponse;
@@ -16,11 +17,11 @@ public class JacksonConverter<T> implements Observable.Operator<T, WLResponse> {
     private Class<T> clazz;
     private TypeReference<T> reference;
 
-    public JacksonConverter(Class<T> clazz) {
+    public JacksonConverter(@NonNull Class<T> clazz) {
         this.clazz = clazz;
     }
 
-    public JacksonConverter(TypeReference<T> reference) {
+    public JacksonConverter(@NonNull TypeReference<T> reference) {
         this.reference = reference;
     }
 
