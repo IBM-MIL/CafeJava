@@ -17,7 +17,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JacksonConverterTest {
+public class JsonConverterTest {
     private Observable<WLResponse> observable;
     private TestSubscriber<Person> subscriber;
 
@@ -26,7 +26,7 @@ public class JacksonConverterTest {
 
         createMocks(testPerson);
 
-        observable.lift(new JacksonConverter<>(Person.class)).subscribe(subscriber);
+        observable.lift(new JsonConverter<>(Person.class)).subscribe(subscriber);
 
         subscriber.assertNoErrors();
         subscriber.assertTerminalEvent();
@@ -43,7 +43,7 @@ public class JacksonConverterTest {
 
         createMocks(persons);
 
-        observable.lift(new JacksonConverter<>(new TypeReference<List<Person>>() {}))
+        observable.lift(new JsonConverter<>(new TypeReference<List<Person>>() {}))
                 .flatMap(new Func1<List<Person>, Observable<Person>>() {
                     @Override
                     public Observable<Person> call(List<Person> persons) {

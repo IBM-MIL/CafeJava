@@ -13,15 +13,15 @@ import java.io.IOException;
 import rx.Observable;
 import rx.Subscriber;
 
-public class JacksonConverter<T> implements Observable.Operator<T, WLResponse> {
+public class JsonConverter<T> implements Observable.Operator<T, WLResponse> {
     private Class<T> clazz;
     private TypeReference<T> reference;
 
-    public JacksonConverter(@NonNull Class<T> clazz) {
+    public JsonConverter(@NonNull Class<T> clazz) {
         this.clazz = clazz;
     }
 
-    public JacksonConverter(@NonNull TypeReference<T> reference) {
+    public JsonConverter(@NonNull TypeReference<T> reference) {
         this.reference = reference;
     }
 
