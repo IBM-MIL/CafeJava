@@ -28,17 +28,17 @@ invocation.subscribe(); // invocation is performed per subscriber
 
 If we have a JavaScript based adapter, we can use a `JSProcedureInvoker` object instead.
 
-For any `WLResponse` containing a valid JSON payload, CafeJava can serialize it automatically for us:
+For any `WLResponse` containing a valid JSON payload, CafeJava provides a custom operator that can do the conversion for us:
 
 ``` java
-Observable<Person> person = invocation.compose(CafeJava.serializeTo(Person.class));
+Observable<Person> person = invocation.lift(new JsonConverter<>(Person.class));
 ```
 
-If we're expecting back an array of objects, we can alternatively supply a `TypeToken`:
+If we're expecting back an array of objects, we can alternatively supply a `TypeReference<T>` to `JsonConverter`:
 
 ``` java
-TypeToken<List<Person>> token = new TypeToken<List<Person>>() {};
-Observable<List<Person>> people = invocation.compose(CafeJava.serializeTo(token));
+TypeReference<List<Person>> reference = new TypeReference<List<Person>>() {};
+Observable<List<Person>> people = invocation.lift(new JsonConverter<>(reference));
 ```
 
 ## Installation
