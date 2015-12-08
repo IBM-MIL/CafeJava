@@ -12,7 +12,7 @@ publish {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '23.0.2'
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
@@ -38,9 +38,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.ibm.mobile.foundation:ibmmobilefirstplatformfoundation:7.1.0.0'
-    compile 'com.android.support:support-annotations:23.0.1'
-    compile 'io.reactivex:rxjava:1.0.10'
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.android.support:support-annotations:23.1.1'
+    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'com.google.code.gson:gson:2.4'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
 }
