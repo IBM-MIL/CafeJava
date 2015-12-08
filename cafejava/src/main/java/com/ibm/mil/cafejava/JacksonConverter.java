@@ -1,14 +1,28 @@
 package com.ibm.mil.cafejava;
 
+import android.support.annotation.Nullable;
+
 import com.worklight.wlclient.api.WLResponse;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
 
 import rx.Observable;
 import rx.Subscriber;
 
-public abstract class JacksonConverter<T> implements Observable.Operator<T, WLResponse> {
-    abstract T convert(String json) throws IOException;
+public class JacksonConverter<T> implements Observable.Operator<T, WLResponse> {
+    private Class<T> clazz;
+    private TypeReference<T> reference;
+
+    public JacksonConverter(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+
+    public JacksonConverter(TypeReference<T> reference) {
+        this.reference = reference;
+    }
 
     @Override public Subscriber<? super WLResponse> call(final Subscriber<? super T> subscriber) {
         return new Subscriber<WLResponse>() {
@@ -27,13 +41,7 @@ public abstract class JacksonConverter<T> implements Observable.Operator<T, WLRe
             @Override public void onNext(WLResponse wlResponse) {
                 if (!subscriber.isUnsubscribed()) {
                     String json = wlResponse.getResponseJSON().toString();
-                    T converted = null;
-
-                    try {
-                        converted = convert(json);
-                    } catch (IOException e) {
-                        subscriber.onError(e); // this should never happen
-                    }
+                    T converted = convert(json);
 
                     if (converted == null) {
                         Throwable e = new Throwable("Could not convert JSON payload: " + json);
@@ -44,5 +52,19 @@ public abstract class JacksonConverter<T> implements Observable.Operator<T, WLRe
                 }
             }
         };
+    }
+
+    @Nullable private T convert(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            if (clazz != null) {
+                return mapper.readValue(json, clazz);
+            } else {
+                return mapper.readValue(json, reference);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // this should never happen
+            return null;
+        }
     }
 }
