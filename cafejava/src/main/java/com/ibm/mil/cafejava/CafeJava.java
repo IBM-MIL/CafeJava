@@ -8,11 +8,6 @@ package com.ibm.mil.cafejava;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.worklight.wlclient.api.WLClient;
 import com.worklight.wlclient.api.WLFailResponse;
 import com.worklight.wlclient.api.WLResponse;
@@ -20,9 +15,6 @@ import com.worklight.wlclient.api.WLResponseListener;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
-
-import static rx.Observable.Transformer;
 
 /**
  * Configurable MFP client for establishing connections and invoking procedures in a reactive
@@ -79,89 +71,6 @@ public final class CafeJava {
                 invoker.invoke(new RxResponseListener(subscriber));
             }
         });
-    }
-
-    /**
-     * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
-     * into a new {@code Observable} with the targeted {@code Class} literal. This can be done by
-     * passing the result of this method to the {@code compose} operator of RxJava. A variable
-     * number of member names can be provided for accessing JSON data that is nested arbitrarily
-     * deep inside the response payload.
-     *
-     * @param clazz       Targeted {@code Class} for the JSON payload to be serialized into.
-     * @param memberNames Variable number of member names for accessing JSON data that is nested
-     *                    arbitrarily deep inside the response payload.
-     * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
-     * . The input {@code Observable} must emit a {@code WLResponse} with a valid JSON payload.
-     */
-    @NonNull
-    public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final Class<T> clazz,
-                                                             @NonNull final String... memberNames) {
-        return transformJson(new Func1<WLResponse, T>() {
-            @Override
-            public T call(WLResponse wlResponse) {
-                JsonElement element = parseNestedJson(wlResponse, memberNames);
-                return new Gson().fromJson(element, clazz);
-            }
-        });
-    }
-
-    /**
-     * Transforms an {@code Observable} that emits a {@code WLResponse} with a valid JSON payload
-     * into a new Observable for the targeted {@code TypeToken}. This can be done by passing the
-     * result of this method to the {@code compose} operator of RxJava. A {@code TypeToken} is
-     * necessary when the targeted type is a parameterized type, such as {@code List}. A variable
-     * number of member names can be provided for accessing JSON data that is nested arbitrarily
-     * deep inside the response payload.
-     *
-     * @param typeToken   Captures the necessary type information for the targeted parameterized
-     *                    type, such as {@code List}.
-     * @param memberNames Variable number of member names for accessing JSON data that is nested
-     *                    arbitrarily deep inside the response payload.
-     * @return {@code Transformer} that can be supplied to the {@code compose} operator of RxJava
-     * . The input {@code Observable} must emit a {@code WLResponse} with a valid JSON payload.
-     */
-    @NonNull
-    public static <T> Transformer<WLResponse, T> serializeTo(@NonNull final TypeToken<T> typeToken,
-                                                             @NonNull final String... memberNames) {
-        return transformJson(new Func1<WLResponse, T>() {
-            @Override
-            public T call(WLResponse wlResponse) {
-                JsonElement element = parseNestedJson(wlResponse, memberNames);
-                return new Gson().fromJson(element, typeToken.getType());
-            }
-        });
-    }
-
-    private static <T> Transformer<WLResponse, T> transformJson(final Func1<WLResponse, T> func) {
-        return new Transformer<WLResponse, T>() {
-            @Override
-            public Observable<T> call(Observable<WLResponse> wlResponseObservable) {
-                return wlResponseObservable.map(func);
-            }
-        };
-    }
-
-    private static JsonElement parseNestedJson(WLResponse wlResponse, String... memberNames) {
-        String json = wlResponse.getResponseJSON().toString();
-        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-
-        // For each member name, fetch the object it maps to until you reach the final member name.
-        // Once the final member name is reached, return its corresponding value.
-        for (int i = 0, size = memberNames.length; i < size; i++) {
-            String member = memberNames[i];
-
-            if (i == size - 1) {
-                // last member name reached; return its value
-                return jsonObject.get(member);
-            } else {
-                // more member names remain, therefore current member must map to an object
-                jsonObject = jsonObject.getAsJsonObject(member);
-            }
-        }
-
-        // no nesting required; return top-level object
-        return jsonObject;
     }
 
     private static class RxResponseListener implements WLResponseListener {

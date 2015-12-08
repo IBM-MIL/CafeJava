@@ -7,12 +7,12 @@ package com.ibm.mil.cafejava;
 
 import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
 import com.worklight.wlclient.api.WLResourceRequest;
 import com.worklight.wlclient.api.WLResponseListener;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Implementation for invoking a procedure from a JavaScript based adapter.
@@ -39,9 +39,9 @@ public final class JSProcedureInvoker implements ProcedureInvoker {
         try {
             URI path = new URI("/adapters/" + adapterName + "/" + procedureName);
             WLResourceRequest request = new WLResourceRequest(path, WLResourceRequest.GET);
-            request.setQueryParameter("params", new Gson().toJson(params));
+            request.setQueryParameter("params", new ObjectMapper().writeValueAsString(params));
             request.send(wlResponseListener);
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
