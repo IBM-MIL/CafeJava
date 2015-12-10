@@ -23,9 +23,9 @@ import java.net.URI;
  * @author Tanner Preiss (github @t-preiss)
  */
 public final class JSProcedureInvoker implements ProcedureInvoker {
-    private String adapterName;
-    private String procedureName;
-    private Object[] params;
+    private final String adapterName;
+    private final String procedureName;
+    private final Object[] params;
 
     public JSProcedureInvoker(String adapterName, String procedureName,
                               @Nullable Object... params) {

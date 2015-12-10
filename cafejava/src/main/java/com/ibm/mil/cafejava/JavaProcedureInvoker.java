@@ -45,8 +45,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     /** Annotated with the {@code HttpMethod} StringDef */
     public static final String DELETE = WLResourceRequest.DELETE;
 
-    private String adapterName;
-    private String path;
+    private final String adapterName;
+    private final String path;
     private HashMap<String, String> pathParams;
     private HashMap<String, String> queryParams;
     private @HttpMethod String httpMethod;
@@ -87,8 +87,8 @@ public final class JavaProcedureInvoker implements ProcedureInvoker {
     public static class Builder {
         private final String adapterName;
         private final String path;
-        private HashMap<String, String> pathParams = new HashMap<>();
-        private HashMap<String, String> queryParams = new HashMap<>();
+        private final HashMap<String, String> pathParams = new HashMap<>();
+        private final HashMap<String, String> queryParams = new HashMap<>();
         private @HttpMethod String httpMethod = GET;
 
         public Builder(String adapterName, String path) {
