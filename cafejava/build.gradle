@@ -5,7 +5,7 @@ publish {
   userOrg = 'milbuild'
   groupId = 'com.ibm.mil'
   artifactId = 'cafejava'
-  publishVersion = '2.0.0'
+  publishVersion = '2.1.0'
   desc = 'RxJava extensions for the MobileFirst Platform (MFP) Android API'
   website = 'https://github.com/IBM-MIL/CafeJava'
 }

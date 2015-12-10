@@ -47,7 +47,7 @@ Observable<List<Person>> people = invocation.lift(new JsonConverter<>(reference)
 In your app's `build.gradle` file:
 
 ``` gradle
-compile 'com.ibm.mil:cafejava:2.0.0'
+compile 'com.ibm.mil:cafejava:2.1.0'
 ```
 
 In the same file, add the following `packagingOptions` to the `android` closure:
