@@ -1,5 +1,7 @@
 # CafeJava
 
+[![Build Status](https://travis-ci.org/IBM-MIL/CafeJava.svg?branch=master)](https://travis-ci.org/IBM-MIL/CafeJava)
+
 Reactive API for invoking [MobileFirst Platform](http://www-03.ibm.com/software/products/en/mobilefirstplatform) (MFP) procedures from an Android client.
 
 To connect to an MFP instance, simply call:
