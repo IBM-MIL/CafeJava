@@ -20,16 +20,16 @@ import com.worklight.wlclient.api.WLResponseListener;
  * @author Tanner Preiss (github @t-preiss)
  */
 public interface ProcedureInvoker {
-    /**
-     * Called internally by {@link CafeJava#invokeProcedure(ProcedureInvoker)} in order to invoke
-     * a procedure. The implementation should trigger a procedure invocation, using the {@code
-     * WLResponseListener} argument that is provided.
-     *
-     * @param wlResponseListener Passed in by {@link CafeJava#invokeProcedure(ProcedureInvoker)}
-     *                           and will internally notify subscribers when a response is
-     *                           emitted by the enclosing {@code Observable}. It is important that
-     *                           this {@code WLResponseListener} is used with the procedure
-     *                           invocation.
-     */
-    void invoke(WLResponseListener wlResponseListener);
+  /**
+   * Called internally by {@link CafeJava#invokeProcedure(ProcedureInvoker)} in order to invoke
+   * a procedure. The implementation should trigger a procedure invocation, using the {@code
+   * WLResponseListener} argument that is provided.
+   *
+   * @param wlResponseListener Passed in by {@link CafeJava#invokeProcedure(ProcedureInvoker)}
+   *                           and will internally notify subscribers when a response is
+   *                           emitted by the enclosing {@code Observable}. It is important that
+   *                           this {@code WLResponseListener} is used with the procedure
+   *                           invocation.
+   */
+  void invoke(WLResponseListener wlResponseListener);
 }
