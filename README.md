@@ -50,20 +50,7 @@ In your app's `build.gradle` file:
 compile 'com.ibm.mil:cafejava:2.1.0'
 ```
 
-In the same file, add the following `packagingOptions` to the `android` closure:
-
-``` gradle
-android {
-    ...
-    packagingOptions {
-        pickFirst 'META-INF/ASL2.0'
-        pickFirst 'META-INF/LICENSE'
-        pickFirst 'META-INF/NOTICE'
-    }
-}
-```
-
-The `wlclient.properties` file generated with your MFP project also needs to be added to your app's `assets` folder.
+The `wlclient.properties` file generated with your MFP project needs to be added to your app's `assets` folder.
 
 CafeJava requires a **minimum SDK version of 9** or above.
 
